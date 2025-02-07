@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'; // ใช้สำหรับ�
 const Part2 = () => {
   const navigate = useNavigate(); // ใช้สำหรับการเปลี่ยนเส้นทาง
 
+  
   const [formData, setFormData] = useState({
     latitude: '',
     longitude: '',
