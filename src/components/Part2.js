@@ -1,91 +1,88 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // ใช้สำหรับการเปลี่ยนเส้นทาง
+import React, { useState, useEffect } from 'react';
 
-const Part2 = () => {
-  const navigate = useNavigate(); // ใช้สำหรับการเปลี่ยนเส้นทาง
-
-  
+const Part2 = ({ onNext }) => {
   const [formData, setFormData] = useState({
-    latitude: '',
-    longitude: '',
-    placeName: '',
-    houseCode: '',
-    houseNumber: '',
-    village: '',
-    subDistrict: '',
+
+    house_registration_id: '',
+    house_number: '',
+    village_no: '',
     alley: '',
-    road: '',
+    street: '',
+    sub_district: '',
     district: '',
     province: '',
-    postalCode: '',
+    postal_code: '',
+    latitude: '',
+    longitude: '',
+    building_name: '',
+    
+  
+    
+    
   });
+
+  const [statusMessage, setStatusMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // เตรียมข้อมูลที่จะส่งไปยัง backend
-    const dataToSend = {
-      house_number: formData.houseNumber,
-      village_no: formData.village,
-      sub_district: formData.subDistrict,
-      district: formData.district,
-      province: formData.province,
-      postal_code: formData.postalCode,
-      housing_type: formData.placeName, // ส่ง placeName เป็น housing_type
-    };
-
+  const handleNext = async () => {
+    setIsSubmitting(true);
+  
+    // ตรวจสอบว่ามีฟิลด์ว่างเปล่าและกำหนดค่าเป็น null
+    const sanitizedData = Object.fromEntries(
+      Object.entries(formData).map(([key, value]) => [
+        key,
+        value.trim() === '' || value === null ? null : value,
+      ])
+    );
+  
     try {
       const response = await fetch('http://localhost:3000/api/households', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(dataToSend),
+        body: JSON.stringify(sanitizedData),
       });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        console.log('ข้อมูลถูกบันทึกแล้ว:', result);
-        navigate('/part3'); // เปลี่ยนเส้นทางไปยังหน้า Part3.js
-      } else {
-        console.error('เกิดข้อผิดพลาดในการบันทึกข้อมูล:', result);
+  
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
       }
+  
+      const result = await response.json();
+      console.log('Response from server:', result);
+  
+      setStatusMessage('ข้อมูลถูกบันทึกสำเร็จ!');
+      onNext(); // เรียก onNext เพื่อเปลี่ยนไปยัง Part ถัดไป
     } catch (error) {
-      console.error('Error during fetch:', error);
+      console.error('Error submitting data:', error);
+      setStatusMessage('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+    } finally {
+      setIsSubmitting(false);
     }
-  };
-
-  const handleBack = () => {
-    navigate(-1); // พาย้อนกลับไปยังหน้าก่อนหน้า
   };
 
   return (
     <div style={{ padding: '20px', maxWidth: '500px', margin: 'auto', fontFamily: 'Arial' }}>
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-        <h1 style={{ flex: 1, textAlign: 'center', fontSize: '18px', margin: 0 }}>
-          ส่วนที่ 1 - ข้อมูลทั่วไปของครัวเรือน
-        </h1>
-      </div>
-      <h3 style={{ marginBottom: '10px' }}>2. ที่อยู่ปัจจุบัน</h3>
+      <h1 style={{ textAlign: 'center' }}>ส่วนที่ 1 - ข้อมูลทั่วไปของครัวเรือน</h1>
+      <h3>2. ที่อยู่ปัจจุบัน</h3>
 
-      <form onSubmit={handleSubmit}>
+      <form>
         <label>พิกัด GPS</label>
         <div style={{ display: 'flex', gap: '10px' }}>
           <input
             name="latitude"
-            placeholder=""
+            placeholder="Latitude"
             value={formData.latitude}
             onChange={handleChange}
           />
           <input
             name="longitude"
-            placeholder=""
+            placeholder="Longitude"
             value={formData.longitude}
             onChange={handleChange}
           />
@@ -93,83 +90,66 @@ const Part2 = () => {
 
         <label>ชื่อสถานที่/ชื่ออาคาร/ชื่อหมู่บ้าน:</label>
         <input
-          name="placeName"
+          name="building_name"
           placeholder=""
-          value={formData.placeName}
+          value={formData.building_name
+          }
           onChange={handleChange}
         />
 
         <label>รหัสประจำบ้าน:</label>
         <input
-          name="houseCode"
+          name="house_registration_id"
           placeholder=""
-          value={formData.houseCode}
+          value={formData.house_registration_id}
           onChange={handleChange}
         />
 
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <div>
-            <label>บ้านเลขที่:</label>
-            <input
-              name="houseNumber"
-              placeholder=""
-              value={formData.houseNumber}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label>หมู่ที่:</label>
-            <input
-              name="village"
-              placeholder=""
-              value={formData.village}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
+        <label>บ้านเลขที่:</label>
+        <input
+          name="house_number"
+          placeholder=""
+          value={formData.house_number}
+          onChange={handleChange}
+        />
 
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <div>
-            <label>ตรอก:</label>
-            <input
-              name="alley"
-              placeholder=""
-              value={formData.alley}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label>ซอย:</label>
-            <input
-              name="subDistrict"
-              placeholder=""
-              value={formData.subDistrict}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
+        <label>หมู่ที่:</label>
+        <input
+          name="village_no"
+          placeholder=""
+          value={formData.village_no}
+          onChange={handleChange}
+        />
+
+        <label>ตรอก:</label>
+        <input
+          name="alley"
+          placeholder=""
+          value={formData.alley}
+          onChange={handleChange}
+        />
 
         <label>ถนน:</label>
         <input
-          name="road"
+          name="street"
           placeholder=""
-          value={formData.road}
+          value={formData.street}
           onChange={handleChange}
         />
 
         <label>ตำบล/แขวง:</label>
         <input
-          name="district"
+          name="sub_district"
           placeholder=""
-          value={formData.district}
+          value={formData.sub_district}
           onChange={handleChange}
         />
 
         <label>อำเภอ/เขต:</label>
         <input
-          name="province"
+          name="district"
           placeholder=""
-          value={formData.province}
+          value={formData.district}
           onChange={handleChange}
         />
 
@@ -183,14 +163,18 @@ const Part2 = () => {
 
         <label>รหัสไปรษณีย์:</label>
         <input
-          name="postalCode"
+          name="postal_code"
           placeholder=""
-          value={formData.postalCode}
+          value={formData.postal_code}
           onChange={handleChange}
         />
-
-        <button type="submit">บันทึก</button>
       </form>
+
+      <button onClick={handleNext} disabled={isSubmitting}>
+        {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ถัดไป'}
+      </button>
+
+      {statusMessage && <p style={{ color: 'red', marginTop: '10px' }}>{statusMessage}</p>}
     </div>
   );
 };
