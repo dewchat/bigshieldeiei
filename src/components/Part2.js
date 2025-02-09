@@ -15,9 +15,7 @@ const Part2 = ({ onNext }) => {
     latitude: '',
     longitude: '',
     building_name: '',
-    
   
-    
     
   });
 

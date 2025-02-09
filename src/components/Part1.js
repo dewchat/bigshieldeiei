@@ -1,66 +1,64 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 
-const Part1 = () => {
-  const navigate = useNavigate();
-
+const Part1 = ({ onNext }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    idCard: '',
-    reason: '',
-    birthDate: '',
+
+    first_last_name: '',
+    national_id: '',
+    no_national_id_reason: '',
+    birth_date: '',
     age: '',
     gender: '',
     relationship: '',
-    education: '',
+    education_level: '',
     phone: '',
-    mobilePhone: '',
+    mobile_phone: '',
   });
 
+  const [statusMessage, setStatusMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+      setFormData({ ...formData, [name]: value });
+    };
   
-    try {
-      const response = await fetch('http://localhost:3000/api/respondents', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          household_id: 1, // ตรวจสอบว่าค่านี้ถูกต้องหรือไม่
-          first_last_name: formData.name,
-          national_id: formData.idCard,
-          birth_date: formData.birthDate,
-          age: formData.age,
-          gender: formData.gender,
-          phone: formData.phone,
-          mobile_phone: formData.mobilePhone,
-        }),
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json(); // อ่านข้อความผิดพลาดจากเซิร์ฟเวอร์
-        throw new Error(errorData.error || 'Internal server error');
+    const handleNext = async () => {
+      setIsSubmitting(true);
+    
+      // ตรวจสอบว่ามีฟิลด์ว่างเปล่าและกำหนดค่าเป็น null
+      const sanitizedData = Object.fromEntries(
+        Object.entries(formData).map(([key, value]) => [
+          key,
+          value.trim() === '' || value === null ? null : value,
+        ])
+      );
+    
+      try {
+        const response = await fetch('http://localhost:3000/api/respondents', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(sanitizedData),
+        });
+    
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+    
+        const result = await response.json();
+        console.log('Response from server:', result);
+    
+        setStatusMessage('ข้อมูลถูกบันทึกสำเร็จ!');
+        onNext(); // เรียก onNext เพื่อเปลี่ยนไปยัง Part ถัดไป
+      } catch (error) {
+        console.error('Error submitting data:', error);
+        setStatusMessage('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+      } finally {
+        setIsSubmitting(false);
       }
-  
-      const data = await response.json();
-      console.log('Data saved successfully:', data);
-      navigate('/part2'); // เปลี่ยนเส้นทางไปยัง Part2
-    } catch (error) {
-      console.error('Error saving data:', error);
-      alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' + error.message); // แสดงข้อความผิดพลาดให้ผู้ใช้ทราบ
-    }
-  };
-
-
-  const handleBack = () => {
-    navigate(-1);
-  };
+    };
 
   return (
     <div style={{ padding: '20px', maxWidth: '500px', margin: 'auto', fontFamily: 'Arial' }}>
@@ -71,11 +69,12 @@ const Part1 = () => {
       </div>
       <h3 style={{ marginBottom: '10px' }}>1. ข้อมูลผู้ตอบแบบสอบถาม</h3>
       <p style={{ color: 'red' }}>(ข้อมูลที่กรอกจะเป็นความลับทั้งหมด)</p>
-      <form onSubmit={handleSubmit}>
+
+      <form>
         <label>ชื่อ - นามสกุล:</label>
         <input
-          name="name"
-          value={formData.name}
+          name="first_last_name"
+          value={formData.first_last_name}
           onChange={handleChange}
           placeholder=""
           style={{ width: '100%', padding: '8px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
@@ -83,8 +82,8 @@ const Part1 = () => {
 
         <label>เลขที่บัตรประชาชน:</label>
         <input
-          name="idCard"
-          value={formData.idCard}
+          name="national_id"
+          value={formData.national_id}
           onChange={handleChange}
           placeholder=""
           style={{ width: '100%', padding: '8px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
@@ -92,8 +91,8 @@ const Part1 = () => {
 
         <label>กรณีไม่มี เนื่องจาก:</label>
         <input
-          name="reason"
-          value={formData.reason}
+          name="no_national_id_reason"
+          value={formData.no_national_id_reason}
           onChange={handleChange}
           placeholder=""
           style={{ width: '100%', padding: '8px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
@@ -101,8 +100,8 @@ const Part1 = () => {
 
         <label>วัน/เดือน/ปีเกิด:</label>
         <input
-          name="birthDate"
-          value={formData.birthDate}
+          name="birth_date"
+          value={formData.birth_date}
           onChange={handleChange}
           placeholder=""
           style={{ width: '100%', padding: '8px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
@@ -137,8 +136,8 @@ const Part1 = () => {
 
         <label>ระดับการศึกษา:</label>
         <input
-          name="education"
-          value={formData.education}
+          name="education_level"
+          value={formData.education_level}
           onChange={handleChange}
           placeholder=""
           style={{ width: '100%', padding: '8px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
@@ -155,17 +154,20 @@ const Part1 = () => {
 
         <label>โทรศัพท์มือถือ:</label>
         <input
-          name="mobilePhone"
-          value={formData.mobilePhone}
+          name="mobile_phone"
+          value={formData.mobile_phone}
           onChange={handleChange}
           placeholder=""
           style={{ width: '100%', padding: '8px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
         />
-
-        <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-          บันทึกและไปต่อ
-        </button>
       </form>
+
+      <button onClick={handleNext} disabled={isSubmitting}>
+        {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ถัดไป'}
+      </button>
+
+      {statusMessage && <p style={{ color: 'red', marginTop: '10px' }}>{statusMessage}</p>}
+    
     </div>
   );
 };

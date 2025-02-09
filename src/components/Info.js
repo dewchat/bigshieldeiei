@@ -34,9 +34,9 @@ const Info = () => {
 
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: 'auto', fontFamily: 'Arial', position: 'relative' }}>
-      {currentPart === 1 && <Part1 />}
+      {currentPart === 1 && <Part1 onNext={nextPart}/>}
       {currentPart === 2 && <Part2 onNext={nextPart} />}
-      {currentPart === 3 && <Part3 />}
+      {currentPart === 3 && <Part3 onNext={nextPart}/>}
       {currentPart === 4 && <Part4 />}
       {currentPart === 5 && <Part5 />}
       {currentPart === 6 && <Part6 />}
