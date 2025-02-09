@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Part7 = () => {
@@ -10,6 +10,18 @@ const Part7 = () => {
     q4: { value: '', note: '' },
     q5: { value: '', note: '' },
   });
+
+  const [totalScore, setTotalScore] = useState(0); // เก็บคะแนนรวม
+
+  // ฟังก์ชันคำนวณคะแนนรวม
+  const calculateScore = () => {
+    return Object.values(answers).reduce((total, { value }) => total + parseInt(value || 0, 10), 0);
+  };
+
+  // อัปเดตคะแนนรวมทุกครั้งที่ answers เปลี่ยนแปลง
+  useEffect(() => {
+    setTotalScore(calculateScore());
+  }, [answers]);
 
   // ฟังก์ชันสำหรับเปลี่ยนค่าของคำตอบในแต่ละข้อ
   const handleChange = (e) => {
@@ -27,15 +39,9 @@ const Part7 = () => {
     }
   };
 
-  // ฟังก์ชันคำนวณคะแนนรวม
-  const calculateScore = () => {
-    return Object.values(answers).reduce((total, { value }) => total + parseInt(value || 0, 10), 0);
-  };
-
   // ฟังก์ชันสำหรับการส่งข้อมูล
   const handleSubmit = (e) => {
     e.preventDefault();
-    const totalScore = calculateScore(); // คำนวณคะแนนรวม
     console.log('คะแนนรวมทั้งหมด:', totalScore);
     console.log('หมายเหตุ:', answers);
     navigate('/part8'); // เปลี่ยนหน้าไปยังหน้าถัดไป
@@ -86,10 +92,10 @@ const Part7 = () => {
         ส่วนที่ 2 - การประเมินสภาวะครอบครัว
       </h1>
       <p>
-      3. กระบวนการยุติธรรม
-นิยาม ช่องทางทางกฎหมายในการคุ้มครอง
-ประชาชนทุกคน ซึ่งเป็นสิ่งสําคัญที่ทุกคนควรจะรู้ 
-เพื่อสิทธิที่เท่าเทียม
+        3. กระบวนการยุติธรรม
+        นิยาม ช่องทางทางกฎหมายในการคุ้มครอง
+        ประชาชนทุกคน ซึ่งเป็นสิ่งสําคัญที่ทุกคนควรจะรู้
+        เพื่อสิทธิที่เท่าเทียม
       </p>
 
       <div style={{
@@ -129,8 +135,9 @@ const Part7 = () => {
         )}
 
         <div>
-          <p>คะแนนเฉลี่ย {calculateScore()}</p>
+          <p>คะแนนรวม: {totalScore}</p>
         </div>
+        
       </form>
     </div>
   );

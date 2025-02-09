@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // ใช้สำหรับเปลี่ยนหน้า
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Part6 = () => {
-  const navigate = useNavigate(); // ใช้สำหรับเปลี่ยนหน้า
+  const navigate = useNavigate();
   const [answers, setAnswers] = useState({
     q1: { value: '', note: '' },
     q2: { value: '', note: '' },
@@ -11,37 +11,39 @@ const Part6 = () => {
     q5: { value: '', note: '' },
   });
 
-  // ฟังก์ชันสำหรับเปลี่ยนค่าของคำตอบในแต่ละข้อ
-  const handleChange = (e) => {
-    const { name, value, dataset } = e.target;
-    if (dataset.type === 'note') {
-      setAnswers({
-        ...answers,
-        [name]: { ...answers[name], note: value },
-      });
-    } else {
-      setAnswers({
-        ...answers,
-        [name]: { ...answers[name], value },
-      });
-    }
-  };
+  const [totalScore, setTotalScore] = useState(0); // Store the total score
 
-  // ฟังก์ชันคำนวณคะแนนรวม
+  // Calculate the total score
   const calculateScore = () => {
     return Object.values(answers).reduce((total, { value }) => total + parseInt(value || 0, 10), 0);
   };
 
-  // ฟังก์ชันสำหรับการส่งข้อมูล
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const totalScore = calculateScore(); // คำนวณคะแนนรวม
-    console.log('คะแนนรวมทั้งหมด:', totalScore);
-    console.log('หมายเหตุ:', answers);
-    navigate('/part7'); // เปลี่ยนหน้าไปยัง Part7
+  // Update the total score whenever answers change
+  useEffect(() => {
+    setTotalScore(calculateScore());
+  }, [answers]);
+
+  // Function to handle changes to answers
+  const handleChange = (e) => {
+    const { name, value, dataset } = e.target;
+    setAnswers((prevAnswers) => ({
+      ...prevAnswers,
+      [name]: {
+        ...prevAnswers[name],
+        [dataset.type === 'note' ? 'note' : 'value']: value,
+      },
+    }));
   };
 
-  // ฟังก์ชันสร้างคำถามแบบหลายตัวเลือก
+  // Submit form handler
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Total score:', totalScore);
+    console.log('Notes:', answers);
+    navigate('/part7'); // Navigate to Part7
+  };
+
+  // Render multiple-choice question with radio buttons
   const renderRadioButtons = (question, name) => (
     <div style={{ marginBottom: '20px' }}>
       <label>{question}</label>
@@ -130,8 +132,9 @@ const Part6 = () => {
         )}
 
         <div>
-          <p>คะแนนเฉลี่ย {calculateScore()}</p>
+          <p>คะแนนรวม: {totalScore}</p>
         </div>
+        
       </form>
     </div>
   );

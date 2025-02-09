@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Part5 = () => {
-  const navigate = useNavigate(); // ใช้สำหรับเปลี่ยนหน้า
+  const navigate = useNavigate();
   const [answers, setAnswers] = useState({
     q1: { value: '', note: '' },
     q2: { value: '', note: '' },
@@ -11,34 +11,36 @@ const Part5 = () => {
     q5: { value: '', note: '' },
   });
 
-  // ฟังก์ชันสำหรับเปลี่ยนค่าของคำตอบในแต่ละข้อ
-  const handleChange = (e) => {
-    const { name, value, dataset } = e.target;
-    if (dataset.type === 'note') {
-      setAnswers({
-        ...answers,
-        [name]: { ...answers[name], note: value },
-      });
-    } else {
-      setAnswers({
-        ...answers,
-        [name]: { ...answers[name], value },
-      });
-    }
-  };
+  const [totalScore, setTotalScore] = useState(0); // เก็บคะแนนรวม
 
   // ฟังก์ชันคำนวณคะแนนรวม
   const calculateScore = () => {
     return Object.values(answers).reduce((total, { value }) => total + parseInt(value || 0, 10), 0);
   };
 
+  // อัปเดตคะแนนรวมทุกครั้งที่ answers เปลี่ยนแปลง
+  useEffect(() => {
+    setTotalScore(calculateScore());
+  }, [answers]);
+
+  // ฟังก์ชันสำหรับเปลี่ยนค่าของคำตอบ
+  const handleChange = (e) => {
+    const { name, value, dataset } = e.target;
+    setAnswers((prevAnswers) => ({
+      ...prevAnswers,
+      [name]: {
+        ...prevAnswers[name],
+        [dataset.type === 'note' ? 'note' : 'value']: value,
+      },
+    }));
+  };
+
   // ฟังก์ชันสำหรับการส่งข้อมูล
   const handleSubmit = (e) => {
     e.preventDefault();
-    const totalScore = calculateScore(); // คำนวณคะแนนรวม
     console.log('คะแนนรวมทั้งหมด:', totalScore);
     console.log('หมายเหตุ:', answers);
-    navigate('/part6'); // เปลี่ยนหน้าไปยังหน้าถัดไป
+    navigate('/part6');
   };
 
   // ฟังก์ชันสร้างคำถามแบบหลายตัวเลือก
@@ -105,30 +107,16 @@ const Part5 = () => {
       </div>
 
       <form onSubmit={handleSubmit}>
-        {renderRadioButtons(
-          '1. สมาชิกในครอบครัวของท่านมีการพูดคุยสื่อสารกันในช่วงเวลาที่อยู่ด้วยกัน',
-          'q1'
-        )}
-        {renderRadioButtons(
-          '2. สมาชิกในครอบครัวของท่านมีการแสดงความเอาใจใส่ซึ่งกันและกัน เช่น การให้กำลังใจ การชื่นชม',
-          'q2'
-        )}
-        {renderRadioButtons(
-          '3. สมาชิกในครอบครัวของท่านมีความเชื่อใจ หรือไว้วางใจที่จะเล่าเรื่องต่างๆ ให้กันและกันฟัง',
-          'q3'
-        )}
-        {renderRadioButtons(
-          '4. สมาชิกในครอบครัวของท่านสามารถยอมรับความคิดเห็นที่แตกต่างกันของกันและกันได้',
-          'q4'
-        )}
-        {renderRadioButtons(
-          '5. สมาชิกในครอบครัวของท่านร่วมตัดสินใจเรื่องสำคัญต่างๆ ด้วยกัน',
-          'q5'
-        )}
+        {renderRadioButtons('1. สมาชิกในครอบครัวของท่านมีการพูดคุยสื่อสารกันในช่วงเวลาที่อยู่ด้วยกัน', 'q1')}
+        {renderRadioButtons('2. สมาชิกในครอบครัวของท่านมีการแสดงความเอาใจใส่ซึ่งกันและกัน เช่น การให้กำลังใจ การชื่นชม', 'q2')}
+        {renderRadioButtons('3. สมาชิกในครอบครัวของท่านมีความเชื่อใจ หรือไว้วางใจที่จะเล่าเรื่องต่างๆ ให้กันและกันฟัง', 'q3')}
+        {renderRadioButtons('4. สมาชิกในครอบครัวของท่านสามารถยอมรับความคิดเห็นที่แตกต่างกันของกันและกันได้', 'q4')}
+        {renderRadioButtons('5. สมาชิกในครอบครัวของท่านร่วมตัดสินใจเรื่องสำคัญต่างๆ ด้วยกัน', 'q5')}
 
         <div>
-          <p>คะแนนเฉลี่ย {calculateScore()}</p>
+          <p>คะแนนรวม: {totalScore}</p>
         </div>
+
       </form>
     </div>
   );
