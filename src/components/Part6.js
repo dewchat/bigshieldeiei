@@ -83,59 +83,64 @@ const Part6 = () => {
   );
 
   return (
-    <div style={{ padding: '20px', maxWidth: '500px', margin: 'auto', fontFamily: 'Arial' }}>
-      <h1 style={{ textAlign: 'center', fontSize: '18px', marginBottom: '20px' }}>
+    <div>
+
+      <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize:'1.2rem', fontWeight:'bold' }}>
         ส่วนที่ 2 - การประเมินสภาวะครอบครัว
-      </h1>
-      <p>
-        2. การมีรายได้และมีงานทํา
-        <br />
-        นิยาม: ลักษณะการประกอบอาชีพของสมาชิกในครอบครัวและรายได้เฉลี่ยที่นํามาใช้จ่ายในการดํารงชีวิต
-      </p>
+      </div> 
 
-      <div
-        style={{
-          border: '1px solid #000',
-          padding: '15px',
-          borderRadius: '10px',
-          backgroundColor: '#f9f9f9',
-          margin: '20px 0',
-        }}
-      >
-        <p style={{ margin: '5px 0' }}>ค่าคะแนน</p>
-        <p style={{ margin: '5px 0' }}>3 = รายได้เพียงพอต่อการดํารงชีพและมีเงินออม</p>
-        <p style={{ margin: '5px 0' }}>2 = รายได้เพียงพอแต่ไม่มีเงินออม</p>
-        <p style={{ margin: '5px 0' }}>1 = รายได้ไม่เพียงพอ และมีหนี้สิน</p>
-        <p style={{ margin: '5px 0' }}>0 = รายได้ไม่เพียงพอ และมีหนี้สินมาก</p>
-      </div>
+      <div style={{ padding:'10px 30px 10px 30px', }}>
+        <p>
+          2. การมีรายได้และมีงานทํา
+          <br />
+          นิยาม: ลักษณะการประกอบอาชีพของสมาชิกในครอบครัวและรายได้เฉลี่ยที่นํามาใช้จ่ายในการดํารงชีวิต
+        </p>
 
-      <form onSubmit={handleSubmit}>
-        {renderRadioButtons(
-          '1. สมาชิกในครอบครัวของท่านสามารถหารายได้เลี้ยงดูครอบครัวได้ทุกคน',
-          'q1'
-        )}
-        {renderRadioButtons(
-          '2. สมาชิกในครอบครัวของท่านมีการออมเงินในรูปแบบต่างๆ เช่น กองทุนหมู่บ้าน สัจจะวันละบาท สลากออมสิน',
-          'q2'
-        )}
-        {renderRadioButtons(
-          '3. สมาชิกในครอบครัวของท่านมีรายได้เพียงพอต่อการดําเนินชีวิต',
-          'q3'
-        )}
-        {renderRadioButtons(
-          '4. สมาชิกในครอบครัวของท่านรับรู้และมีการวางแผนการชําระหนี้สิน',
-          'q4'
-        )}
-        {renderRadioButtons(
-          '5. สมาชิกในครอบครัวของท่านมีความสามารถในการจัดการชําระหนี้สินได้ตรงเวลา',
-          'q5'
-        )}
-
-        <div>
-          <p>คะแนนรวม: {totalScore}</p>
+        <div
+          style={{
+            border: '1px solid #000',
+            padding: '15px',
+            borderRadius: '10px',
+            backgroundColor: '#f9f9f9',
+            margin: '20px 0',
+          }}
+        >
+          <p style={{ margin: '5px 0' }}>ค่าคะแนน</p>
+          <p style={{ margin: '5px 0' }}>3 = รายได้เพียงพอต่อการดํารงชีพและมีเงินออม</p>
+          <p style={{ margin: '5px 0' }}>2 = รายได้เพียงพอแต่ไม่มีเงินออม</p>
+          <p style={{ margin: '5px 0' }}>1 = รายได้ไม่เพียงพอ และมีหนี้สิน</p>
+          <p style={{ margin: '5px 0' }}>0 = รายได้ไม่เพียงพอ และมีหนี้สินมาก</p>
         </div>
-        
-      </form>
+
+        <form onSubmit={handleSubmit}>
+          {renderRadioButtons(
+            '1. สมาชิกในครอบครัวของท่านสามารถหารายได้เลี้ยงดูครอบครัวได้ทุกคน',
+            'q1'
+          )}
+          {renderRadioButtons(
+            '2. สมาชิกในครอบครัวของท่านมีการออมเงินในรูปแบบต่างๆ เช่น กองทุนหมู่บ้าน สัจจะวันละบาท สลากออมสิน',
+            'q2'
+          )}
+          {renderRadioButtons(
+            '3. สมาชิกในครอบครัวของท่านมีรายได้เพียงพอต่อการดําเนินชีวิต',
+            'q3'
+          )}
+          {renderRadioButtons(
+            '4. สมาชิกในครอบครัวของท่านรับรู้และมีการวางแผนการชําระหนี้สิน',
+            'q4'
+          )}
+          {renderRadioButtons(
+            '5. สมาชิกในครอบครัวของท่านมีความสามารถในการจัดการชําระหนี้สินได้ตรงเวลา',
+            'q5'
+          )}
+
+          <div>
+            <p>คะแนนรวม: {totalScore}</p>
+          </div>
+          
+        </form>
+
+      </div>
     </div>
   );
 };

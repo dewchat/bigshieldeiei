@@ -81,57 +81,59 @@ const Part12 = () => {
   );
 
   return (
-    <div style={{ padding: '20px', maxWidth: '500px', margin: 'auto', fontFamily: 'Arial' }}>
-      <h1 style={{ textAlign: 'center', fontSize: '18px', marginBottom: '20px' }}>
+    <div>
+      <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize:'1.2rem', fontWeight:'bold' }}>
         ส่วนที่ 2 - การประเมินสภาวะครอบครัว
-      </h1>
-      <p>
-      8. สุขภาพ
-นิยาม ประชาชนได้รับการป้องกันโรคภัยไข้เจ็บ
-การรักษาพยาบาล การส่งเสริมและพัฒนาสุขภาพกาย
-จิตใจ อารมณ์ และสังคม
-      </p>
+      </div> 
+      <div style={{ padding:'10px 30px 10px 30px', }}>
+        <p>
+        8. สุขภาพ
+  นิยาม ประชาชนได้รับการป้องกันโรคภัยไข้เจ็บ
+  การรักษาพยาบาล การส่งเสริมและพัฒนาสุขภาพกาย
+  จิตใจ อารมณ์ และสังคม
+        </p>
 
-      <div style={{
-        border: '1px solid #000',
-        padding: '15px',
-        borderRadius: '10px',
-        backgroundColor: '#f9f9f9',
-        margin: '20px 0'
-      }}>
-        <p style={{ margin: '5px 0' }}>ค่าคะแนน</p>
-        <p style={{ margin: '5px 0' }}>3 = สมาชิกในครอบครัวทุกคนมีสุขภาพร่างกายแข็งแรง</p>
-        <p style={{ margin: '5px 0' }}>2 = สมาชิกในครอบครัวไม่สามารถช่วยเหลือตัวเองบางคน</p>
-        <p style={{ margin: '5px 0' }}>1 = สมาชิกในครอบครัวไม่สามารถช่วยเหลือตัวเองได้เป็นส่วนใหญ่</p>
-        <p style={{ margin: '5px 0' }}>0 = สมาชิกในครอบครัวไม่สามารถช่วยเหลือตัวเองได้ทุกคน</p>
-      </div>
-
-      <form onSubmit={handleSubmit}>
-        {renderRadioButtons(
-          '1.สมาชิกในครอบครัวของท่านได้รับสิทธิด้านสุขภาพ',
-          'q1'
-        )}
-        {renderRadioButtons(
-          '2.สมาชิกในครอบครัวของท่านมีสุขภาพร่างกายสมบูรณ์แข็งแรงทุกช่วงวัย',
-          'q2'
-        )}
-        {renderRadioButtons(
-          '3. สมาชิกในครอบครัวของท่านมีวิธีการดูแลสุขภาพ',
-          'q3'
-        )}
-        {renderRadioButtons(
-          '4.สมาชิกในครอบครัวของท่านมีทักษะในการดูแลผู้ประสบปัญหาสุขภาพกาย สุขภาพใจ',
-          'q4'
-        )}
-        {renderRadioButtons(
-          '5. สมาชิกในครอบครัวของท่านได้รับการดูแลสุขภาพจากหน่วยงานที่เกี่ยวข้อง',
-          'q5'
-        )}
-
-        <div>
-          <p>คะแนนเฉลี่ย {calculateScore()}</p>
+        <div style={{
+          border: '1px solid #000',
+          padding: '15px',
+          borderRadius: '10px',
+          backgroundColor: '#f9f9f9',
+          margin: '20px 0'
+        }}>
+          <p style={{ margin: '5px 0' }}>ค่าคะแนน</p>
+          <p style={{ margin: '5px 0' }}>3 = สมาชิกในครอบครัวทุกคนมีสุขภาพร่างกายแข็งแรง</p>
+          <p style={{ margin: '5px 0' }}>2 = สมาชิกในครอบครัวไม่สามารถช่วยเหลือตัวเองบางคน</p>
+          <p style={{ margin: '5px 0' }}>1 = สมาชิกในครอบครัวไม่สามารถช่วยเหลือตัวเองได้เป็นส่วนใหญ่</p>
+          <p style={{ margin: '5px 0' }}>0 = สมาชิกในครอบครัวไม่สามารถช่วยเหลือตัวเองได้ทุกคน</p>
         </div>
-      </form>
+
+        <form onSubmit={handleSubmit}>
+          {renderRadioButtons(
+            '1.สมาชิกในครอบครัวของท่านได้รับสิทธิด้านสุขภาพ',
+            'q1'
+          )}
+          {renderRadioButtons(
+            '2.สมาชิกในครอบครัวของท่านมีสุขภาพร่างกายสมบูรณ์แข็งแรงทุกช่วงวัย',
+            'q2'
+          )}
+          {renderRadioButtons(
+            '3. สมาชิกในครอบครัวของท่านมีวิธีการดูแลสุขภาพ',
+            'q3'
+          )}
+          {renderRadioButtons(
+            '4.สมาชิกในครอบครัวของท่านมีทักษะในการดูแลผู้ประสบปัญหาสุขภาพกาย สุขภาพใจ',
+            'q4'
+          )}
+          {renderRadioButtons(
+            '5. สมาชิกในครอบครัวของท่านได้รับการดูแลสุขภาพจากหน่วยงานที่เกี่ยวข้อง',
+            'q5'
+          )}
+
+          <div>
+            <p>คะแนนเฉลี่ย {calculateScore()}</p>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

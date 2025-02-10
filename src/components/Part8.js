@@ -81,57 +81,57 @@ const Part8 = () => {
   );
 
   return (
-    <div style={{ padding: '20px', maxWidth: '500px', margin: 'auto', fontFamily: 'Arial' }}>
-      <h1 style={{ textAlign: 'center', fontSize: '18px', marginBottom: '20px' }}>
+    <div>
+      <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize:'1.2rem', fontWeight:'bold' }}>
         ส่วนที่ 2 - การประเมินสภาวะครอบครัว
-      </h1>
-      <p>
-      4. ความมั่นคงปลอดภัย
-นิยาม ความปลอดภัยทั้งด้านร่างกาย จิตใจและสังคม
-ที่จะนําไปสู่ความมั่นคงในการดํารงชีวิต
-ไม่ตกอยู่ในสภาวะความลําบาก
-      </p>
+      </div> 
+      <div style={{ padding:'10px 30px 10px 30px', }}>
 
-      <div style={{
-        border: '1px solid #000',
-        padding: '15px',
-        borderRadius: '10px',
-        backgroundColor: '#f9f9f9',
-        margin: '20px 0'
-      }}>
-        <p style={{ margin: '5px 0' }}>ค่าคะแนน</p>
-        <p style={{ margin: '5px 0' }}>3 = มีความรู้สึกมั่นคงปลอดภัยในชีวิตมาก</p>
-        <p style={{ margin: '5px 0' }}>2 = มีความรู้สึกมั่นคง ปลอดภัยในชีวิตปานกลาง</p>
-        <p style={{ margin: '5px 0' }}>1 = มีน้อยความรู้สึกมั่นคง ปลอดภัยในชีวิต</p>
-        <p style={{ margin: '5px 0' }}>0 =  ไม่มีความรู้สึกมั่นคง ปลอดภัยในชีวิต </p>
-      </div>
+        <p>
+          4. ความมั่นคงปลอดภัยนิยาม ความปลอดภัยทั้งด้านร่างกาย จิตใจและสังคมที่จะนําไปสู่ความมั่นคงในการดํารงชีวิตไม่ตกอยู่ในสภาวะความลําบาก
+        </p>
 
-      <form onSubmit={handleSubmit}>
-        {renderRadioButtons(
-          '1. ครอบครัวของท่านถือเป็นพื้นที่ที่มีความสุขอยู่แล้วบายใจ ทั้งด้านร่างกาย และจิตใจ',
-          'q1'
-        )}
-        {renderRadioButtons(
-          '2.สมาชิกในครอบครัวของท่านให้อิสระและสามารถทําตามความต้องการของตนเองได้',
-          'q2'
-        )}
-        {renderRadioButtons(
-          '3. สมาชิกในครอบครัวของท่านให้ความสําคัญกับการยอมรับตัวตน เช่น เป็นผู้พิการ เป็นเพศที่สาม',
-          'q3'
-        )}
-        {renderRadioButtons(
-          '4. สมาชิกในครอบครัวของท่านมีการพูดคุยแลกเปลี่ยนความคิดเห็นซึ่งกันและกัน',
-          'q4'
-        )}
-        {renderRadioButtons(
-          '5. สมาชิกในครอบครัวสามารถอยู่ร่วมกับคนในชุมชนได้',
-          'q5'
-        )}
-
-        <div>
-          <p>คะแนนเฉลี่ย {calculateScore()}</p>
+        <div style={{
+          border: '1px solid #000',
+          padding: '15px',
+          borderRadius: '10px',
+          backgroundColor: '#f9f9f9',
+          margin: '20px 0'
+        }}>
+          <p style={{ margin: '5px 0' }}>ค่าคะแนน</p>
+          <p style={{ margin: '5px 0' }}>3 = มีความรู้สึกมั่นคงปลอดภัยในชีวิตมาก</p>
+          <p style={{ margin: '5px 0' }}>2 = มีความรู้สึกมั่นคง ปลอดภัยในชีวิตปานกลาง</p>
+          <p style={{ margin: '5px 0' }}>1 = มีน้อยความรู้สึกมั่นคง ปลอดภัยในชีวิต</p>
+          <p style={{ margin: '5px 0' }}>0 =  ไม่มีความรู้สึกมั่นคง ปลอดภัยในชีวิต </p>
         </div>
-      </form>
+
+        <form onSubmit={handleSubmit}>
+          {renderRadioButtons(
+            '1. ครอบครัวของท่านถือเป็นพื้นที่ที่มีความสุขอยู่แล้วบายใจ ทั้งด้านร่างกาย และจิตใจ',
+            'q1'
+          )}
+          {renderRadioButtons(
+            '2.สมาชิกในครอบครัวของท่านให้อิสระและสามารถทําตามความต้องการของตนเองได้',
+            'q2'
+          )}
+          {renderRadioButtons(
+            '3. สมาชิกในครอบครัวของท่านให้ความสําคัญกับการยอมรับตัวตน เช่น เป็นผู้พิการ เป็นเพศที่สาม',
+            'q3'
+          )}
+          {renderRadioButtons(
+            '4. สมาชิกในครอบครัวของท่านมีการพูดคุยแลกเปลี่ยนความคิดเห็นซึ่งกันและกัน',
+            'q4'
+          )}
+          {renderRadioButtons(
+            '5. สมาชิกในครอบครัวสามารถอยู่ร่วมกับคนในชุมชนได้',
+            'q5'
+          )}
+
+          <div>
+            <p>คะแนนเฉลี่ย {calculateScore()}</p>
+          </div>
+        </form>
+      </div>  
     </div>
   );
 };

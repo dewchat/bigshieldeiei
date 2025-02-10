@@ -83,10 +83,14 @@ const Part5 = () => {
   );
 
   return (
-    <div style={{ padding: '20px', maxWidth: '500px', margin: 'auto', fontFamily: 'Arial' }}>
-      <h1 style={{ textAlign: 'center', fontSize: '18px', marginBottom: '20px' }}>
+    <div>
+      
+      <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize:'1.2rem', fontWeight:'bold' }}>
         ส่วนที่ 2 - การประเมินสภาวะครอบครัว
-      </h1>
+      </div> 
+
+      <div style={{ padding:'10px 30px 10px 30px', }}>
+
       <p>
         1. สัมพันธภาพในครอบครัว  
         นิยาม: ความสัมพันธ์ระหว่างสมาชิกในครอบครัวหรือคนที่อยู่ในครัวเรือนเดียวกัน โดยมีการพูดคุย ปรึกษาหารือ มีความเอาใจใส่ซึ่งกันและกัน
@@ -118,6 +122,8 @@ const Part5 = () => {
         </div>
 
       </form>
+
+      </div>
     </div>
   );
 };

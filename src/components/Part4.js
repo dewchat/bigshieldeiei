@@ -17,10 +17,46 @@ const Part4 = () => {
     );
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Handle the form submission, e.g., navigate to the next page
-    navigate('/part5'); // Change the path according to your routing configuration
+
+    // ข้อมูลที่ส่งไปยังฐานข้อมูล
+    const dataToSend = familyMembers.map((member) => ({
+      number: member.number,
+      idNumber: member.idNumber,
+      fullName: member.fullName,
+      birthDate: member.birthDate,
+      age: member.age,
+      gender: member.gender,
+      relationship: member.relationship,
+      occupation: member.occupation,
+      monthlyIncome: member.monthlyIncome,
+      normal: member.normal,
+      disabled: member.disabled,
+      chronicIllness: member.chronicIllness,
+      bedridden: member.bedridden,
+      selfHelp: member.selfHelp,
+      note: member.note,
+    }));
+
+    try {
+      const response = await fetch('http://localhost:3000/api/persons', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataToSend),
+      });
+
+      if (response.ok) {
+        // ส่งข้อมูลสำเร็จ, นำทางไปหน้าอื่น
+        navigate('/part5');
+      } else {
+        console.error('Error sending data:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   const handleBack = () => {
@@ -28,16 +64,12 @@ const Part4 = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      {/* Header */}
-      <div style={{ padding: "10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        
-      <h1 style={{ flex: 1, textAlign: 'center', fontSize: '18px', margin: 0 }}>
-          ส่วนที่ 1 - ข้อมูลทั่วไปของครัวเรือน
-      </h1>
-      </div>
+    <div>
+      
+      <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize:'1.2rem', fontWeight:'bold' }}>
+        ส่วนที่ 1 - ข้อมูลทั่วไปของครัวเรือน
+      </div> 
 
-      {/* Content */}
       <form onSubmit={handleSubmit}>
         <h3>4. สมาชิกในครอบครัว (ผู้ที่อาศัยอยู่จริงในปัจจุบัน)</h3>
         {familyMembers.map((member) => (
@@ -173,7 +205,9 @@ const Part4 = () => {
         <button type="button" onClick={addMember} style={{ marginTop: '20px', padding: '10px' }}>
           เพิ่มสมาชิก
         </button>
-        
+        <button type="submit" style={{ marginTop: '20px', padding: '10px' }}>
+          ยืนยัน
+        </button>
       </form>
     </div>
   );

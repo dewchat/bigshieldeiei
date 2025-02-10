@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // สำหรับการเปลี่ยนเส้นทาง
+import { useNavigate } from 'react-router-dom';
 import Part1 from './Part1';
 import Part2 from './Part2';
 import Part3 from './Part3';
@@ -16,27 +16,36 @@ import Part13 from './Part13';
 
 const Info = () => {
   const [currentPart, setCurrentPart] = useState(1);
-  const navigate = useNavigate(); // เรียกใช้ useNavigate สำหรับการเปลี่ยนเส้นทาง
+  const navigate = useNavigate();
 
   const nextPart = () => {
     if (currentPart < 13) {
-      setCurrentPart(currentPart + 1); // เพิ่ม Part ถัดไป
+      setCurrentPart(currentPart + 1);
     }
   };
 
   const prevPart = () => {
     if (currentPart === 1) {
-      navigate('/home'); // เมื่ออยู่ใน Part1 และกด ← จะไปที่หน้า Home
+      navigate('/home');
     } else if (currentPart > 1) {
-      setCurrentPart(currentPart - 1); // ย้อนกลับไปส่วนก่อนหน้า
+      setCurrentPart(currentPart - 1);
     }
   };
 
+  const loadFontAwesome = () => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css";
+    document.head.appendChild(link);
+  };
+  
+  loadFontAwesome();
+
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: 'auto', fontFamily: 'Arial', position: 'relative' }}>
-      {currentPart === 1 && <Part1 onNext={nextPart}/>}
+    <div style={{ maxWidth: '800px', margin: 'auto', fontFamily: 'Arial', position: 'relative' }}>
+      {currentPart === 1 && <Part1 onNext={nextPart} />}
       {currentPart === 2 && <Part2 onNext={nextPart} />}
-      {currentPart === 3 && <Part3 onNext={nextPart}/>}
+      {currentPart === 3 && <Part3 onNext={nextPart} />}
       {currentPart === 4 && <Part4 />}
       {currentPart === 5 && <Part5 />}
       {currentPart === 6 && <Part6 />}
@@ -48,23 +57,27 @@ const Info = () => {
       {currentPart === 12 && <Part12 />}
       {currentPart === 13 && <Part13 />}
 
-      {/* ปุ่ม ← ที่มุมซ้ายบน */}
-      <button 
-        onClick={prevPart} 
-        style={{
-          position: 'absolute',
-          top: '20px',
-          left: '20px',
-          fontSize: '20px'
-        }}
-      >
-        ←
-      </button>
+    <button 
+      onClick={prevPart} 
+      style={{
+        position: 'absolute',
+        top: '25px',
+        left: '30px',
+        fontSize: '20px',
+        background: 'transparent',
+        border: 'none',
+        cursor: 'pointer'
+      }}
+    >
+      <i className="fas fa-arrow-left"></i> {/* ใช้ไอคอน */}
+    </button>
+  
 
-      {/* ปุ่ม ถัดไป ที่มุมขวาล่าง */}
+
+      {/* ปุ่มถัดไป */}
       <button 
         onClick={nextPart} 
-        disabled={currentPart === 13} // Disable the "Next" button when you're on Part 7
+        disabled={currentPart === 13}
         style={{
           position: 'absolute',
           bottom: '10px',
