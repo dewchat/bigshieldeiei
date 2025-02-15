@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 const Part1 = ({ onNext }) => {
   const [formData, setFormData] = useState({
+    household_id:'',
     first_last_name: '',
     national_id: '',
     no_national_id_reason: '',
@@ -63,6 +64,17 @@ const Part1 = ({ onNext }) => {
         </div>
 
         <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column', marginBottom:'10px'}}>
+          <label htmlFor='household_id'>household_id</label>
+          <input
+            type='text'
+            name='household_id'
+            value={formData.household_id}
+            onChange={handleChange}
+            style={{border:'1px solid gray', borderRadius:'8px', height: '26px', padding: '4px 7px 4px 10px'}}
+          />
+        </div>
+
+        <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column', marginBottom:'10px'}}>
           <label htmlFor='first_last_name'>ชื่อ - นามสกุล</label>
           <input
             type='text'
@@ -109,13 +121,13 @@ const Part1 = ({ onNext }) => {
           <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column'}}>
             <label htmlFor='age'>อายุ</label>
             <input
-              type='number'
+              type='integer'
               name='age'
               value={formData.age}
               onChange={handleChange}
               style={{width:'160px', border:'1px solid gray', borderRadius:'8px', height: '26px', padding: '4px 7px 4px 10px'}}
             />
-          </div>
+          </div> 
         </div>
 
         <div style={{display: 'flex', marginTop:'10px',justifyContent:'space-between'}}>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // เพิ่มการนำเข้า axios
 
 const Part5 = () => {
   const navigate = useNavigate();
@@ -35,12 +36,35 @@ const Part5 = () => {
     }));
   };
 
-  // ฟังก์ชันสำหรับการส่งข้อมูล
-  const handleSubmit = (e) => {
+  // ฟังก์ชันสำหรับการส่งข้อมูลไปยัง API
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('คะแนนรวมทั้งหมด:', totalScore);
     console.log('หมายเหตุ:', answers);
-    navigate('/part6');
+
+    // เตรียมข้อมูลที่จะส่งไปยัง API
+    const data = {
+      household_id: 1, // ใส่ค่า household_id ที่เหมาะสม
+      assessment_date: new Date().toISOString(), // ใช้วันที่ปัจจุบัน
+      q1_score: answers.q1.value,
+      q1_note: answers.q1.note,
+      q2_score: answers.q2.value,
+      q2_note: answers.q2.note,
+      q3_score: answers.q3.value,
+      q3_note: answers.q3.note,
+      q4_score: answers.q4.value,
+      q4_note: answers.q4.note,
+      q5_score: answers.q5.value,
+      q5_note: answers.q5.note,
+    };
+
+    try {
+      // ส่งข้อมูลไปยัง API
+      const response = await axios.post('http://localhost:3000/api/family-relationships-assessment', data);
+      console.log('ข้อมูลที่ส่งไป:', response.data); // แสดงข้อมูลที่ตอบกลับจาก API
+    } catch (error) {
+      console.error('เกิดข้อผิดพลาดในการส่งข้อมูล:', error);
+    }
   };
 
   // ฟังก์ชันสร้างคำถามแบบหลายตัวเลือก
@@ -84,45 +108,46 @@ const Part5 = () => {
 
   return (
     <div>
-      
       <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize:'1.2rem', fontWeight:'bold' }}>
         ส่วนที่ 2 - การประเมินสภาวะครอบครัว
       </div> 
 
       <div style={{ padding:'10px 30px 10px 30px', }}>
+        <p>
+          1. สัมพันธภาพในครอบครัว  
+          นิยาม: ความสัมพันธ์ระหว่างสมาชิกในครอบครัวหรือคนที่อยู่ในครัวเรือนเดียวกัน โดยมีการพูดคุย ปรึกษาหารือ มีความเอาใจใส่ซึ่งกันและกัน
+        </p>
 
-      <p>
-        1. สัมพันธภาพในครอบครัว  
-        นิยาม: ความสัมพันธ์ระหว่างสมาชิกในครอบครัวหรือคนที่อยู่ในครัวเรือนเดียวกัน โดยมีการพูดคุย ปรึกษาหารือ มีความเอาใจใส่ซึ่งกันและกัน
-      </p>
-
-      <div style={{
-        border: '1px solid #000',
-        padding: '15px',
-        borderRadius: '10px',
-        backgroundColor: '#f9f9f9',
-        margin: '20px 0'
-      }}>
-        <p style={{ margin: '5px 0' }}>ค่าคะแนน</p>
-        <p style={{ margin: '5px 0' }}>3 = สมาชิกมีการพูดคุยสื่อสารกันทุกเรื่องเป็นประจํา</p>
-        <p style={{ margin: '5px 0' }}>2 = สมาชิกเลือกพูดคุยสื่อสารกันในบางเรื่องและบางครั้ง</p>
-        <p style={{ margin: '5px 0' }}>1 = สมาชิกเลือกที่จะพูดคุยกับบุคคลภายนอกมากกว่าสมาชิกในครอบครัว</p>
-        <p style={{ margin: '5px 0' }}>0 = สมาชิกในครอบครัวไม่มีการพูดคุยกัน ต่างคนต่างอยู่</p>
-      </div>
-
-      <form onSubmit={handleSubmit}>
-        {renderRadioButtons('1. สมาชิกในครอบครัวของท่านมีการพูดคุยสื่อสารกันในช่วงเวลาที่อยู่ด้วยกัน', 'q1')}
-        {renderRadioButtons('2. สมาชิกในครอบครัวของท่านมีการแสดงความเอาใจใส่ซึ่งกันและกัน เช่น การให้กำลังใจ การชื่นชม', 'q2')}
-        {renderRadioButtons('3. สมาชิกในครอบครัวของท่านมีความเชื่อใจ หรือไว้วางใจที่จะเล่าเรื่องต่างๆ ให้กันและกันฟัง', 'q3')}
-        {renderRadioButtons('4. สมาชิกในครอบครัวของท่านสามารถยอมรับความคิดเห็นที่แตกต่างกันของกันและกันได้', 'q4')}
-        {renderRadioButtons('5. สมาชิกในครอบครัวของท่านร่วมตัดสินใจเรื่องสำคัญต่างๆ ด้วยกัน', 'q5')}
-
-        <div>
-          <p>คะแนนรวม: {totalScore}</p>
+        <div
+          style={{
+            border: '1px solid #000',
+            padding: '15px',
+            borderRadius: '10px',
+            backgroundColor: '#f9f9f9',
+            margin: '20px 0',
+          }}
+        >
+          <p style={{ margin: '5px 0' }}>ค่าคะแนน</p>
+          <p style={{ margin: '5px 0' }}>3 = สมาชิกมีการพูดคุยสื่อสารกันทุกเรื่องเป็นประจํา</p>
+          <p style={{ margin: '5px 0' }}>2 = สมาชิกเลือกพูดคุยสื่อสารกันในบางเรื่องและบางครั้ง</p>
+          <p style={{ margin: '5px 0' }}>1 = สมาชิกเลือกที่จะพูดคุยกับบุคคลภายนอกมากกว่าสมาชิกในครอบครัว</p>
+          <p style={{ margin: '5px 0' }}>0 = สมาชิกในครอบครัวไม่มีการพูดคุยกัน ต่างคนต่างอยู่</p>
         </div>
 
-      </form>
+        <form onSubmit={handleSubmit}>
+          {renderRadioButtons('1. สมาชิกในครอบครัวของท่านมีการพูดคุยสื่อสารกันในช่วงเวลาที่อยู่ด้วยกัน', 'q1')}
+          {renderRadioButtons('2. สมาชิกในครอบครัวของท่านมีการแสดงความเอาใจใส่ซึ่งกันและกัน เช่น การให้กำลังใจ การชื่นชม', 'q2')}
+          {renderRadioButtons('3. สมาชิกในครอบครัวของท่านมีความเชื่อใจ หรือไว้วางใจที่จะเล่าเรื่องต่างๆ ให้กันและกันฟัง', 'q3')}
+          {renderRadioButtons('4. สมาชิกในครอบครัวของท่านสามารถยอมรับความคิดเห็นที่แตกต่างกันของกันและกันได้', 'q4')}
+          {renderRadioButtons('5. สมาชิกในครอบครัวของท่านร่วมตัดสินใจเรื่องสำคัญต่างๆ ด้วยกัน', 'q5')}
 
+          <div>
+            <p>คะแนนรวม: {totalScore}</p>
+          </div>
+
+          <button type="submit">ส่งข้อมูล</button>
+
+        </form>
       </div>
     </div>
   );

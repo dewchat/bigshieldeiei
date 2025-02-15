@@ -15,6 +15,7 @@ const Part2 = ({ onNext }) => {
     latitude: '',
     longitude: '',
     building_name: '',
+    location_name:''
   
     
   });
@@ -161,8 +162,8 @@ const Part2 = ({ onNext }) => {
             <label>ซอย</label>
             <input
               type='text'
-              name='street'
-              value={formData.street}
+              name='location_name'
+              value={formData.location_name}
               onChange={handleChange}
               style={{width:'160px',border:'1px solid gray', borderRadius:'8px', height: '26px', padding: '4px 7px 4px 10px'}}
             />
@@ -170,7 +171,7 @@ const Part2 = ({ onNext }) => {
         </div>
 
         <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column', marginBottom:'10px'}}>
-          <label htmlFor='mobile_phone'>ถนน</label>
+          <label>ถนน</label>
           <input
             type='text'
             name='street'
@@ -181,7 +182,7 @@ const Part2 = ({ onNext }) => {
         </div>
 
         <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column', marginBottom:'10px'}}>
-          <label htmlFor='mobile_phone'>ตำบล/แขวง</label>
+          <label>ตำบล/แขวง</label>
           <input
             type='text'
             name='sub_district'
@@ -192,7 +193,7 @@ const Part2 = ({ onNext }) => {
         </div>
 
         <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column', marginBottom:'10px'}}>
-          <label htmlFor='mobile_phone'>อำเภอ/เขต</label>
+          <label>อำเภอ/เขต</label>
           <input
             type='text'
             name='district'
@@ -203,7 +204,7 @@ const Part2 = ({ onNext }) => {
         </div>
 
         <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column', marginBottom:'10px'}}>
-          <label htmlFor='mobile_phone'>จังหวัด</label>
+          <label>จังหวัด</label>
           <input
             type='text'
             name='province'
@@ -214,7 +215,7 @@ const Part2 = ({ onNext }) => {
         </div>
 
         <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column', marginBottom:'10px'}}>
-          <label htmlFor='mobile_phone'>รหัสไปรษณีย์</label>
+          <label>รหัสไปรษณีย์</label>
           <input
             type='text'
             name='postal_code'
@@ -225,109 +226,6 @@ const Part2 = ({ onNext }) => {
         </div>
 
     </div>
-     
-
-
-
-
-      {/* <form>
-        <label>พิกัด GPS</label>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <input
-            name="latitude"
-            placeholder="Latitude"
-            value={formData.latitude}
-            onChange={handleChange}
-          />
-          <input
-            name="longitude"
-            placeholder="Longitude"
-            value={formData.longitude}
-            onChange={handleChange}
-          />
-        </div>
-
-        <label>ชื่อสถานที่/ชื่ออาคาร/ชื่อหมู่บ้าน:</label>
-        <input
-          name="building_name"
-          placeholder=""
-          value={formData.building_name
-          }
-          onChange={handleChange}
-        />
-
-        <label>รหัสประจำบ้าน:</label>
-        <input
-          name="house_registration_id"
-          placeholder=""
-          value={formData.house_registration_id}
-          onChange={handleChange}
-        />
-
-        <label>บ้านเลขที่:</label>
-        <input
-          name="house_number"
-          placeholder=""
-          value={formData.house_number}
-          onChange={handleChange}
-        />
-
-        <label>หมู่ที่:</label>
-        <input
-          name="village_no"
-          placeholder=""
-          value={formData.village_no}
-          onChange={handleChange}
-        />
-
-        <label>ตรอก:</label>
-        <input
-          name="alley"
-          placeholder=""
-          value={formData.alley}
-          onChange={handleChange}
-        />
-
-        <label>ถนน:</label>
-        <input
-          name="street"
-          placeholder=""
-          value={formData.street}
-          onChange={handleChange}
-        />
-
-        <label>ตำบล/แขวง:</label>
-        <input
-          name="sub_district"
-          placeholder=""
-          value={formData.sub_district}
-          onChange={handleChange}
-        />
-
-        <label>อำเภอ/เขต:</label>
-        <input
-          name="district"
-          placeholder=""
-          value={formData.district}
-          onChange={handleChange}
-        />
-
-        <label>จังหวัด:</label>
-        <input
-          name="province"
-          placeholder=""
-          value={formData.province}
-          onChange={handleChange}
-        />
-
-        <label>รหัสไปรษณีย์:</label>
-        <input
-          name="postal_code"
-          placeholder=""
-          value={formData.postal_code}
-          onChange={handleChange}
-        />
-      </form> */}
 
       <button onClick={handleNext} disabled={isSubmitting}>
         {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ถัดไป'}
