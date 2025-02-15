@@ -11,7 +11,7 @@ const Part13 = () => {
     setAnswers((prevAnswers) => ({
       ...prevAnswers,
       [name]: {
-        ...prevAnswers[name],
+        ...prevAnswers[name], 
         [value]: checked,
       },
     }));
