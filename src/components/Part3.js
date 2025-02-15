@@ -76,100 +76,117 @@ const Part3 = () => {
       <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize:'1.2rem', fontWeight:'bold' }}>
         ส่วนที่ 1 - ข้อมูลทั่วไปของครัวเรือน
       </div>
-       
-      <h3 style={{ fontSize: '16px', fontWeight: 'bold' }}>3. สถานภาพที่อยู่อาศัย</h3>
-      <p style={{ fontSize: '14px' }}>(แนบรูปถ่ายที่อยู่อาศัยถ้ามี)</p>
-
-      <form onSubmit={handleSubmit}>
-        {/* Group 1 */}
+      
+      <div style={{ padding:'10px 30px 10px 30px', }}>
         <div>
-          {['มีที่อยู่อาศัยเป็นของตนเองและมั่นคงถาวร', 'มีที่อยู่อาศัยเป็นของตนเองแต่ไม่มั่นคงถาวร'].map((option, index) => (
-            <label key={index} style={{ display: 'block', fontSize: '14px' }}>
-              <input
-                type="radio"
-                name="group1"
-                value={option}
-                checked={formData.group1 === option}
-                onChange={(e) => handleChange(e, 'group1')}
-                style={{ marginRight: '8px' }}
-              />
-              {option}
-            </label>
-          ))}
+          <h3>3. สถานภาพที่อยู่อาศัย</h3>
+          <p style={{color:'red'}}>(แนบรูปถ่ายที่อยู่อาศัยถ้ามี)</p>
         </div>
 
-        {/* Group 2 */}
-        <div>
-          {['อาศัยอยู่กับผู้อื่น', 'อยู่ในที่ดินบุคคลอื่น'].map((option, index) => (
-            <label key={index} style={{ display: 'block', fontSize: '14px' }}>
-              <input
-                type="radio"
-                name="group2"
-                value={option}
-                checked={formData.group2 === option}
-                onChange={(e) => handleChange(e, 'group2')}
-                style={{ marginRight: '8px' }}
-              />
-              {option}
-            </label>
-          ))}
-        </div>
-
-        {/* Group 3 */}
-        <div>
-          {['พื้นที่สาธารณะ', 'บ้านเช่า'].map((option, index) => (
-            <label key={index} style={{ display: 'block', fontSize: '14px' }}>
-              <input
-                type="radio"
-                name="group3"
-                value={option}
-                checked={formData.group3 === option}
-                onChange={(e) => handleChange(e, 'group3')}
-                style={{ marginRight: '8px' }}
-              />
-              {option}
-            </label>
-          ))}
-        </div>
-
-        {/* Nested options for 'บ้านเช่า' */}
-        {formData.group3 === 'บ้านเช่า' && (
-          <div style={{ marginLeft: '20px' }}>
-            {['เช่าซื้อ', 'เช่ารายเดือน'].map((subOption, subIndex) => (
-              <label key={subIndex} style={{ display: 'block', fontSize: '14px' }}>
+        <form onSubmit={handleSubmit}>
+          {/* Group 1 */}
+          <div>
+            {['มีที่อยู่อาศัยเป็นของตนเองและมั่นคงถาวร', 'มีที่อยู่อาศัยเป็นของตนเองแต่ไม่มั่นคงถาวร'].map((option, index) => (
+              <label key={index} style={{ display: 'block', fontSize: '14px' }}>
                 <input
                   type="radio"
-                  name="rentalOption"
-                  value={subOption}
-                  checked={formData.rentalOption === subOption}
-                  onChange={handleRadioChange}
+                  name="group1"
+                  value={option}
+                  checked={formData.group1 === option}
+                  onChange={(e) => handleChange(e, 'group1')}
                   style={{ marginRight: '8px' }}
                 />
-                {subOption}
+                {option}
               </label>
             ))}
           </div>
-        )}
 
-        {/* Specific Description */}
-        <div style={{ marginTop: '10px' }}>
-          <label style={{ fontSize: '14px' }}>โปรดระบุลักษณะที่อยู่อาศัย</label>
+          {/* Group 2 */}
+          <div>
+            {['อาศัยอยู่กับผู้อื่น', 'อยู่ในที่ดินบุคคลอื่น'].map((option, index) => (
+              <label key={index} style={{ display: 'block', fontSize: '14px' }}>
+                <input
+                  type="radio"
+                  name="group2"
+                  value={option}
+                  checked={formData.group2 === option}
+                  onChange={(e) => handleChange(e, 'group2')}
+                  style={{ marginRight: '8px' }}
+                />
+                {option}
+              </label>
+            ))}
+          </div>
+
+          {/* Group 3 */}
+          <div>
+            {['พื้นที่สาธารณะ', 'บ้านเช่า'].map((option, index) => (
+              <label key={index} style={{ display: 'block', fontSize: '14px' }}>
+                <input
+                  type="radio"
+                  name="group3"
+                  value={option}
+                  checked={formData.group3 === option}
+                  onChange={(e) => handleChange(e, 'group3')}
+                  style={{ marginRight: '8px' }}
+                />
+                {option}
+              </label>
+            ))}
+          </div>
+
+          {/* Nested options for 'บ้านเช่า' */}
+          {formData.group3 === 'บ้านเช่า' && (
+            <div style={{ marginLeft: '20px' }}>
+              {['เช่าซื้อ', 'เช่ารายเดือน'].map((subOption, subIndex) => (
+                <label key={subIndex} style={{ display: 'block', fontSize: '14px' }}>
+                  <input
+                    type="radio"
+                    name="rentalOption"
+                    value={subOption}
+                    checked={formData.rentalOption === subOption}
+                    onChange={handleRadioChange}
+                    style={{ marginRight: '8px' }}
+                  />
+                  {subOption}
+                </label>
+              ))}
+            </div>
+          )}
+
+          {/* Specific Description */}
+          {/* <div style={{ marginTop: '10px' }}>
+            <label style={{ fontSize: '14px' }}>โปรดระบุลักษณะที่อยู่อาศัย</label>
+            <input
+              type="text"
+              name="specificDescription"
+              value={formData.specificDescription}
+              onChange={handleInputChange}
+              style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '5px' }}
+            />
+          </div> */}
+
+          <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column', marginBottom:'10px'}}>
+          <label>โปรดระบุลักษณะที่อยู่อาศัย</label>
           <input
-            type="text"
-            name="specificDescription"
+            type='text'
+            name='specificDescription'
             value={formData.specificDescription}
-            onChange={handleInputChange}
-            style={{ width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '5px' }}
+            onChange={handleChange}
+            style={{border:'1px solid gray', borderRadius:'8px', height: '26px', padding: '4px 7px 4px 10px'}}
           />
         </div>
 
-        {/* Submit Button */}
-        <div style={{ marginTop: '20px' }}>
-          <button type="submit" style={{ padding: '10px 20px', fontSize: '16px' }}>
-            ส่งข้อมูล
-          </button>
-        </div>
-      </form>
+
+          {/* Submit Button */}
+          <div style={{ marginTop: '20px' }}>
+            <button type="submit" style={{ padding: '10px 10px', fontSize: '15px' }}>
+              ถัดไป
+            </button>
+
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
