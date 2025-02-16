@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Part3 = () => {
+const Part3 = ({ onNext }) => {
   const [formData, setFormData] = useState({
     group1: '',
     group2: '',
@@ -8,6 +8,9 @@ const Part3 = () => {
     rentalOption: '',
     specificDescription: '',
   });
+
+  const [statusMessage, setStatusMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (event, group) => {
     setFormData((prev) => ({
@@ -33,6 +36,7 @@ const Part3 = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsSubmitting(true);
 
     const data = {
       household_id: 1,  // Assuming household_id is fixed for now. You might want to change this dynamically
@@ -59,20 +63,22 @@ const Part3 = () => {
       const result = await response.json();
       if (response.ok) {
         console.log('Data submitted successfully:', result);
-        // Handle success (e.g., clear the form, show a success message, etc.)
+        setStatusMessage('ข้อมูลถูกบันทึกสำเร็จ!');
+        onNext(); // Call onNext to proceed to the next part
       } else {
         console.error('Error submitting data:', result);
-        // Handle error (e.g., show an error message)
+        setStatusMessage('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
       }
     } catch (error) {
       console.error('Error submitting data:', error);
-      // Handle network error (e.g., show an error message)
+      setStatusMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div>
-
       <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize:'1.2rem', fontWeight:'bold' }}>
         ส่วนที่ 1 - ข้อมูลทั่วไปของครัวเรือน
       </div>
@@ -160,18 +166,20 @@ const Part3 = () => {
               type='text'
               name='specificDescription'
               value={formData.specificDescription}
-              onChange={handleChange}
+              onChange={handleInputChange}
               style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
             />
           </div>
 
           {/* Submit Button */}
           <div style={{ marginTop: '20px' }}>
-            <button type="submit" style={{ padding: '10px 20px', fontSize: '16px' }}>
-              ส่งข้อมูล
+            <button type="submit" disabled={isSubmitting} style={{ padding: '10px 20px', fontSize: '16px' }}>
+              {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ส่งข้อมูล'}
             </button>
           </div>
         </form>
+
+        {statusMessage && <p style={{ color: 'red', marginTop: '10px' }}>{statusMessage}</p>}
       </div>
     </div>
   );

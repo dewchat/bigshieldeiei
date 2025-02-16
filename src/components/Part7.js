@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const Part7 = () => {
+const Part7 = ({ onNext }) => {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState({
     q1: { value: '', note: '' },
@@ -13,33 +13,34 @@ const Part7 = () => {
   });
 
   const [totalScore, setTotalScore] = useState(0); 
-  const [householdId, setHouseholdId] = useState(''); 
- 
-   const calculateScore = () => {
-     return Object.values(answers).reduce((total, { value }) => total + parseInt(value || 0, 10), 0);
-   };
- 
-   useEffect(() => {
-     setTotalScore(calculateScore());
-   }, [answers]);
- 
-   const handleChange = (e) => {
-     const { name, value, dataset } = e.target;
-     setAnswers((prevAnswers) => ({
-       ...prevAnswers,
-       [name]: {
-         ...prevAnswers[name],
-         [dataset.type === 'note' ? 'note' : 'value']: value,
-       },
-     }));
-   };
- 
-   const handleSubmit = async (e) => {
-     e.preventDefault();
-     console.log('คะแนนรวมทั้งหมด:', totalScore);
-     console.log('หมายเหตุ:', answers);
+  const [householdId, setHouseholdId] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('');
 
-     const data = {
+  const calculateScore = () => {
+    return Object.values(answers).reduce((total, { value }) => total + parseInt(value || 0, 10), 0);
+  };
+
+  useEffect(() => {
+    setTotalScore(calculateScore());
+  }, [answers]);
+
+  const handleChange = (e) => {
+    const { name, value, dataset } = e.target;
+    setAnswers((prevAnswers) => ({
+      ...prevAnswers,
+      [name]: {
+        ...prevAnswers[name],
+        [dataset.type === 'note' ? 'note' : 'value']: value,
+      },
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const data = {
       household_id: householdId, 
       assessment_date: new Date().toISOString(),
       q1_score: answers.q1.value,
@@ -55,10 +56,15 @@ const Part7 = () => {
     };
 
     try {
-      const response = await axios.post(' http://localhost:3000/api/justice-process-assessment', data);
-      console.log('ข้อมูลที่ส่งไป:', response.data); 
+      const response = await axios.post('http://localhost:3000/api/justice-process-assessment', data);
+      console.log('ข้อมูลที่ส่งไป:', response.data);
+      setStatusMessage('ข้อมูลถูกบันทึกสำเร็จ!');
+      onNext(); // เรียก onNext เพื่อเปลี่ยนไปยัง Part ถัดไป
     } catch (error) {
       console.error('เกิดข้อผิดพลาดในการส่งข้อมูล:', error);
+      setStatusMessage('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -102,13 +108,15 @@ const Part7 = () => {
 
   return (
     <div>
-     <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize:'1.2rem', fontWeight:'bold' }}>
+      <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize:'1.2rem', fontWeight:'bold' }}>
         ส่วนที่ 2 - การประเมินสภาวะครอบครัว
       </div> 
 
       <div style={{ padding:'10px 30px 10px 30px', }}>
         <p>
-          3. กระบวนการยุติธรรมนิยาม ช่องทางทางกฎหมายในการคุ้มครองประชาชนทุกคน ซึ่งเป็นสิ่งสําคัญที่ทุกคนควรจะรู้เพื่อสิทธิที่เท่าเทียม
+          3. กระบวนการยุติธรรม
+          <br />
+          นิยาม: ช่องทางทางกฎหมายในการคุ้มครองประชาชนทุกคน ซึ่งเป็นสิ่งสําคัญที่ทุกคนควรจะรู้เพื่อสิทธิที่เท่าเทียม
         </p>
 
         <div style={{
@@ -122,11 +130,10 @@ const Part7 = () => {
           <p style={{ margin: '5px 0' }}>3 = ได้รับการคุ้มครองสิทธิ เสรีภาพและความเป็นธรรมในทางกฎหมาย</p>
           <p style={{ margin: '5px 0' }}>2 = ได้รับความคุ้มครองสิทธิ เสรีภาพและความเป็นธรรมแค่บางส่วน</p>
           <p style={{ margin: '5px 0' }}>1 = ไม่ได้รับความคุ้มครองสิทธิ เสรีภาพและความเป็นธรรม แต่มีเจ้าหน้าที่ให้คําแนะนํา</p>
-          <p style={{ margin: '5px 0' }}>0 =  ไม่ได้รับความคุ้มครองสิทธิ เสรีภาพและความเป็นธรรม </p>
+          <p style={{ margin: '5px 0' }}>0 = ไม่ได้รับความคุ้มครองสิทธิ เสรีภาพและความเป็นธรรม</p>
         </div>
 
         <form onSubmit={handleSubmit}>
-
           <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
             <label>Household ID:</label>
             <input
@@ -148,9 +155,12 @@ const Part7 = () => {
             <p>คะแนนรวม: {totalScore}</p>
           </div>
 
-          <button type="submit">ส่งข้อมูล</button>
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ถัดไป'}
+          </button>
         </form>
 
+        {statusMessage && <p style={{ color: 'red', marginTop: '10px' }}>{statusMessage}</p>}
       </div>
     </div>
   );

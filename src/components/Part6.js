@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const Part6 = () => {
+const Part6 = ({ onNext }) => {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState({
     q1: { value: '', note: '' },
@@ -12,34 +12,35 @@ const Part6 = () => {
     q5: { value: '', note: '' },
   });
 
- const [totalScore, setTotalScore] = useState(0); 
- const [householdId, setHouseholdId] = useState(''); 
- 
-   const calculateScore = () => {
-     return Object.values(answers).reduce((total, { value }) => total + parseInt(value || 0, 10), 0);
-   };
- 
-   useEffect(() => {
-     setTotalScore(calculateScore());
-   }, [answers]);
- 
-   const handleChange = (e) => {
-     const { name, value, dataset } = e.target;
-     setAnswers((prevAnswers) => ({
-       ...prevAnswers,
-       [name]: {
-         ...prevAnswers[name],
-         [dataset.type === 'note' ? 'note' : 'value']: value,
-       },
-     }));
-   };
- 
-   const handleSubmit = async (e) => {
-     e.preventDefault();
-     console.log('คะแนนรวมทั้งหมด:', totalScore);
-     console.log('หมายเหตุ:', answers);
+  const [totalScore, setTotalScore] = useState(0); 
+  const [householdId, setHouseholdId] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('');
 
-     const data = {
+  const calculateScore = () => {
+    return Object.values(answers).reduce((total, { value }) => total + parseInt(value || 0, 10), 0);
+  };
+
+  useEffect(() => {
+    setTotalScore(calculateScore());
+  }, [answers]);
+
+  const handleChange = (e) => {
+    const { name, value, dataset } = e.target;
+    setAnswers((prevAnswers) => ({
+      ...prevAnswers,
+      [name]: {
+        ...prevAnswers[name],
+        [dataset.type === 'note' ? 'note' : 'value']: value,
+      },
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const data = {
       household_id: householdId, 
       assessment_date: new Date().toISOString(),
       q1_score: answers.q1.value,
@@ -56,9 +57,14 @@ const Part6 = () => {
 
     try {
       const response = await axios.post('http://localhost:3000/api/income-employment-assessment', data);
-      console.log('ข้อมูลที่ส่งไป:', response.data); 
+      console.log('ข้อมูลที่ส่งไป:', response.data);
+      setStatusMessage('ข้อมูลถูกบันทึกสำเร็จ!');
+      onNext(); // เรียก onNext เพื่อเปลี่ยนไปยัง Part ถัดไป
     } catch (error) {
       console.error('เกิดข้อผิดพลาดในการส่งข้อมูล:', error);
+      setStatusMessage('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -102,7 +108,6 @@ const Part6 = () => {
 
   return (
     <div>
-
       <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize:'1.2rem', fontWeight:'bold' }}>
         ส่วนที่ 2 - การประเมินสภาวะครอบครัว
       </div> 
@@ -131,7 +136,6 @@ const Part6 = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
-          
           <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
             <label>Household ID:</label>
             <input
@@ -153,9 +157,12 @@ const Part6 = () => {
             <p>คะแนนรวม: {totalScore}</p>
           </div>
 
-          <button type="submit">ส่งข้อมูล</button>
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ถัดไป'}
+          </button>
         </form>
 
+        {statusMessage && <p style={{ color: 'red', marginTop: '10px' }}>{statusMessage}</p>}
       </div>
     </div>
   );

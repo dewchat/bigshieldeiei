@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Part1 = ({ onNext }) => {
   const [formData, setFormData] = useState({
@@ -25,7 +25,6 @@ const Part1 = ({ onNext }) => {
 
   const handleAgeChange = (e) => {
     const { value } = e.target;
-    // ตรวจสอบว่าเป็นตัวเลขหรือไม่
     if (!isNaN(value) && value !== '') {
       setFormData({ ...formData, age: parseInt(value, 10) });
     } else {
@@ -60,6 +59,15 @@ const Part1 = ({ onNext }) => {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (statusMessage) {
+      const timer = setTimeout(() => {
+        setStatusMessage('');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [statusMessage]);
 
   return (
     <div>

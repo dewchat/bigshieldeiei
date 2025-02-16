@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const Part12 = () => {
+const Part12 = ({ onNext }) => {
   const navigate = useNavigate(); 
   const [answers, setAnswers] = useState({
     q1: { value: '', note: '' },
@@ -14,6 +14,8 @@ const Part12 = () => {
 
   const [totalScore, setTotalScore] = useState(0); 
   const [householdId, setHouseholdId] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('');
 
   const calculateScore = () => {
     return Object.values(answers).reduce((total, { value }) => total + parseInt(value || 0, 10), 0);
@@ -36,8 +38,7 @@ const Part12 = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('คะแนนรวมทั้งหมด:', totalScore);
-    console.log('หมายเหตุ:', answers);
+    setIsSubmitting(true);
 
     const data = {
       household_id: householdId,
@@ -55,10 +56,15 @@ const Part12 = () => {
     };
 
     try {
-      const response = await axios.post(' http://localhost:3000/api/health-assessment', data);
-      console.log('ข้อมูลที่ส่งไป:', response.data); 
+      const response = await axios.post('http://localhost:3000/api/health-assessment', data);
+      console.log('ข้อมูลที่ส่งไป:', response.data);
+      setStatusMessage('ข้อมูลถูกบันทึกสำเร็จ!');
+      onNext(); // เรียก onNext เพื่อเปลี่ยนไปยัง Part ถัดไป
     } catch (error) {
       console.error('เกิดข้อผิดพลาดในการส่งข้อมูล:', error);
+      setStatusMessage('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -108,8 +114,9 @@ const Part12 = () => {
 
       <div style={{ padding:'10px 30px 10px 30px', }}>
         <p>
-        8. สุขภาพ
-        นิยาม : ประชาชนได้รับการป้องกันโรคภัยไข้เจ็บ การรักษาพยาบาล การส่งเสริมและพัฒนาสุขภาพกาย จิตใจ อารมณ์ และสังคม
+          8. สุขภาพ
+          <br />
+          นิยาม: ประชาชนได้รับการป้องกันโรคภัยไข้เจ็บ การรักษาพยาบาล การส่งเสริมและพัฒนาสุขภาพกาย จิตใจ อารมณ์ และสังคม
         </p>
 
         <div style={{
@@ -138,18 +145,22 @@ const Part12 = () => {
             />
           </div>
 
-          {renderRadioButtons('1.สมาชิกในครอบครัวของท่านได้รับสิทธิด้านสุขภาพ', 'q1')}
-          {renderRadioButtons('2.สมาชิกในครอบครัวของท่านมีสุขภาพร่างกายสมบูรณ์แข็งแรงทุกช่วงวัย', 'q2')}
+          {renderRadioButtons('1. สมาชิกในครอบครัวของท่านได้รับสิทธิด้านสุขภาพ', 'q1')}
+          {renderRadioButtons('2. สมาชิกในครอบครัวของท่านมีสุขภาพร่างกายสมบูรณ์แข็งแรงทุกช่วงวัย', 'q2')}
           {renderRadioButtons('3. สมาชิกในครอบครัวของท่านมีวิธีการดูแลสุขภาพ', 'q3')}
-          {renderRadioButtons('4.สมาชิกในครอบครัวของท่านมีทักษะในการดูแลผู้ประสบปัญหาสุขภาพกาย สุขภาพใจ', 'q4')}
+          {renderRadioButtons('4. สมาชิกในครอบครัวของท่านมีทักษะในการดูแลผู้ประสบปัญหาสุขภาพกาย สุขภาพใจ', 'q4')}
           {renderRadioButtons('5. สมาชิกในครอบครัวของท่านได้รับการดูแลสุขภาพจากหน่วยงานที่เกี่ยวข้อง', 'q5')}
 
           <div>
             <p>คะแนนรวม: {totalScore}</p>
           </div>
 
-          <button type="submit">ส่งข้อมูล</button>
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ถัดไป'}
+          </button>
         </form>
+
+        {statusMessage && <p style={{ color: 'red', marginTop: '10px' }}>{statusMessage}</p>}
       </div>
     </div>
   );

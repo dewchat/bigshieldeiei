@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const Part8 = () => {
+const Part8 = ({ onNext }) => {
   const navigate = useNavigate(); 
   const [answers, setAnswers] = useState({
     q1: { value: '', note: '' },
@@ -14,6 +14,8 @@ const Part8 = () => {
 
   const [totalScore, setTotalScore] = useState(0);
   const [householdId, setHouseholdId] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('');
 
   const calculateScore = () => {
     return Object.values(answers).reduce((total, { value }) => total + (parseInt(value, 10) || 0), 0);
@@ -40,8 +42,7 @@ const Part8 = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('คะแนนรวมทั้งหมด:', totalScore);
-    console.log('หมายเหตุ:', answers);
+    setIsSubmitting(true);
 
     const data = {
       household_id: householdId,
@@ -61,8 +62,13 @@ const Part8 = () => {
     try {
       const response = await axios.post('http://localhost:3000/api/security-assessment', data);
       console.log('ข้อมูลที่ส่งไป:', response.data);
+      setStatusMessage('ข้อมูลถูกบันทึกสำเร็จ!');
+      onNext(); // เรียก onNext เพื่อเปลี่ยนไปยัง Part ถัดไป
     } catch (error) {
       console.error('เกิดข้อผิดพลาดในการส่งข้อมูล:', error);
+      setStatusMessage('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -112,7 +118,9 @@ const Part8 = () => {
       <div style={{ padding:'10px 30px 10px 30px', }}>
 
         <p>
-          4. ความมั่นคงปลอดภัยนิยาม ความปลอดภัยทั้งด้านร่างกาย จิตใจและสังคมที่จะนําไปสู่ความมั่นคงในการดํารงชีวิตไม่ตกอยู่ในสภาวะความลําบาก
+          4. ความมั่นคงปลอดภัย
+          <br />
+          นิยาม: ความปลอดภัยทั้งด้านร่างกาย จิตใจและสังคมที่จะนําไปสู่ความมั่นคงในการดํารงชีวิตไม่ตกอยู่ในสภาวะความลําบาก
         </p>
 
         <div style={{
@@ -130,7 +138,7 @@ const Part8 = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
-        <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+          <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
             <label>Household ID:</label>
             <input
               type="text"
@@ -151,8 +159,12 @@ const Part8 = () => {
             <p>คะแนนรวม: {totalScore}</p>
           </div>
 
-          <button type="submit">ส่งข้อมูล</button>
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ถัดไป'}
+          </button>
         </form>
+
+        {statusMessage && <p style={{ color: 'red', marginTop: '10px' }}>{statusMessage}</p>}
       </div>  
     </div>
   );

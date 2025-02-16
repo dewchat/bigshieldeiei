@@ -46,15 +46,15 @@ const Info = () => {
       {currentPart === 1 && <Part1 onNext={nextPart} />}
       {currentPart === 2 && <Part2 onNext={nextPart} />}
       {currentPart === 3 && <Part3 onNext={nextPart} />}
-      {currentPart === 4 && <Part4 />}
-      {currentPart === 5 && <Part5 />}
-      {currentPart === 6 && <Part6 />}
-      {currentPart === 7 && <Part7 />}
-      {currentPart === 8 && <Part8 />}
-      {currentPart === 9 && <Part9 />}
-      {currentPart === 10 && <Part10 />}
-      {currentPart === 11 && <Part11 />}
-      {currentPart === 12 && <Part12 />}
+      {currentPart === 4 && <Part4 onNext={nextPart} />}
+      {currentPart === 5 && <Part5 onNext={nextPart} />}
+      {currentPart === 6 && <Part6 onNext={nextPart} />}
+      {currentPart === 7 && <Part7 onNext={nextPart} />}
+      {currentPart === 8 && <Part8 onNext={nextPart} />}
+      {currentPart === 9 && <Part9 onNext={nextPart} />}
+      {currentPart === 10 && <Part10 onNext={nextPart} />}
+      {currentPart === 11 && <Part11 onNext={nextPart} />}
+      {currentPart === 12 && <Part12 onNext={nextPart} />}
       {currentPart === 13 && <Part13 />}
 
     <button 

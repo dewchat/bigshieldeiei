@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const Part9 = () => {
+const Part9 = ({ onNext }) => {
   const navigate = useNavigate();
   const [answers, setAnswers] = useState({
     q1: { value: '', note: '' },
@@ -14,6 +14,8 @@ const Part9 = () => {
 
   const [totalScore, setTotalScore] = useState(0); 
   const [householdId, setHouseholdId] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('');
 
   const calculateScore = () => {
     return Object.values(answers).reduce((total, { value }) => total + parseInt(value || 0, 10), 0);
@@ -34,11 +36,9 @@ const Part9 = () => {
     }));
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('คะแนนรวมทั้งหมด:', totalScore);
-    console.log('หมายเหตุ:', answers);
+    setIsSubmitting(true);
 
     const data = {
       household_id: householdId,
@@ -58,8 +58,13 @@ const Part9 = () => {
     try {
       const response = await axios.post('http://localhost:3000/api/social-service-assessment', data);
       console.log('ข้อมูลที่ส่งไป:', response.data);
+      setStatusMessage('ข้อมูลถูกบันทึกสำเร็จ!');
+      onNext(); // เรียก onNext เพื่อเปลี่ยนไปยัง Part ถัดไป
     } catch (error) {
       console.error('เกิดข้อผิดพลาดในการส่งข้อมูล:', error);
+      setStatusMessage('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -110,6 +115,7 @@ const Part9 = () => {
       <div style={{ padding:'10px 30px 10px 30px', }}>
         <p>
           5. บริการสังคม
+          <br />
           นิยาม: การจัดสวัสดิการสังคมพื้นฐานที่จัดโดยภาครัฐให้แก่ประชาชนให้ได้รับการบริการอย่างเท่าเทียม
         </p>
 
@@ -121,10 +127,10 @@ const Part9 = () => {
           margin: '20px 0'
         }}>
           <p style={{ margin: '5px 0' }}>ค่าคะแนน</p>
-          <p style={{ margin: '5px 0' }}>3 =  สมาชิกในครอบครัวมักจะหาเวลาว่างในการทํากิจกรรมร่วมกันอยู่เสมอ</p>
+          <p style={{ margin: '5px 0' }}>3 = สมาชิกในครอบครัวมักจะหาเวลาว่างในการทํากิจกรรมร่วมกันอยู่เสมอ</p>
           <p style={{ margin: '5px 0' }}>2 = สมาชิกในครอบครัวมักจะการพักผ่อนหรือทํากิจกรรมอื่นๆในบางครั้ง</p>
           <p style={{ margin: '5px 0' }}>1 = สมาชิกในครอบครัวทํากิจกรรมร่วมกันน้อย</p>
-          <p style={{ margin: '5px 0' }}>0 =  สมาชิกในครอบครัวไม่ทํากิจกรรมร่วมกันและไม่สนใจการทํากิจกรรมร่วมกัน</p>
+          <p style={{ margin: '5px 0' }}>0 = สมาชิกในครอบครัวไม่ทํากิจกรรมร่วมกันและไม่สนใจการทํากิจกรรมร่วมกัน</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -139,18 +145,22 @@ const Part9 = () => {
             />
           </div>
 
-          {renderRadioButtons('1.สมาชิกในครอบครัวของท่านร่วมเป็นสมาชิกกลุ่มต่างๆในชุมชน เช่น กลุ่มกองทุนต่างๆ', 'q1')}
-          {renderRadioButtons('2.สมาชิกในครอบครัวของท่านมีการทํากิจกรรมทางสังคมร่วมกับชุมชน', 'q2')}
+          {renderRadioButtons('1. สมาชิกในครอบครัวของท่านร่วมเป็นสมาชิกกลุ่มต่างๆในชุมชน เช่น กลุ่มกองทุนต่างๆ', 'q1')}
+          {renderRadioButtons('2. สมาชิกในครอบครัวของท่านมีการทํากิจกรรมทางสังคมร่วมกับชุมชน', 'q2')}
           {renderRadioButtons('3. สมาชิกในครอบครัวเข้าร่วมเป็นอาสาสมัครในชุมชน', 'q3')}
           {renderRadioButtons('4. สมาชิกในครอบครัวของท่านเคยได้รับบริการในรูปแบบต่างๆจากหน่วยงานรัฐ เอกชน หรือ อปท.', 'q4')}
-          {renderRadioButtons('5. สมาชิกในครอบครัวของท่านมีผู้เปราะบางและด้รับบริการทางสังคมจากหน่วยงานที่เกี่ยวข้อง', 'q5')}
+          {renderRadioButtons('5. สมาชิกในครอบครัวของท่านมีผู้เปราะบางและได้รับบริการทางสังคมจากหน่วยงานที่เกี่ยวข้อง', 'q5')}
 
           <div>
             <p>คะแนนรวม: {totalScore}</p>
           </div>
 
-          <button type="submit">ส่งข้อมูล</button>
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ถัดไป'}
+          </button>
         </form>
+
+        {statusMessage && <p style={{ color: 'red', marginTop: '10px' }}>{statusMessage}</p>}
       </div>
     </div>
   );

@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-const Part4 = () => {
-  const navigate = useNavigate();
+const Part4 = ({ onNext }) => {
   const [member, setMember] = useState({ id: Date.now() });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('');
 
   const handleInputChange = (field, value) => {
     setMember({ ...member, [field]: value });
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleNext = async () => {
+    setIsSubmitting(true);
+    setStatusMessage('');
 
     const dataToSend = {
       household_id: 1,
@@ -40,13 +41,23 @@ const Part4 = () => {
       });
 
       if (response.ok) {
-        navigate('/part5');
+        setStatusMessage('ข้อมูลถูกบันทึกสำเร็จ!');
+        onNext(); // เรียก onNext เพื่อเปลี่ยนไปยังส่วนถัดไป
       } else {
         console.error('Error sending data:', response.statusText);
+        setStatusMessage('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
       }
     } catch (error) {
       console.error('Error:', error);
+      setStatusMessage('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์');
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    handleNext(); // เรียก handleNext เมื่อฟอร์มถูกส่ง
   };
 
   return (
@@ -147,68 +158,68 @@ const Part4 = () => {
           </div>
 
           <div>
-            <label>สภาพร่างกาย</label>
-            <div>
-              <label>
-                <input
-                  type="checkbox"
-                  onChange={(e) => handleInputChange("normal", e.target.checked)}
-                  style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
-                />
-                ปกติ
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  onChange={(e) => handleInputChange("disabled", e.target.checked)}
-                  style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
-                />
-                พิการ
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  onChange={(e) => handleInputChange("chronicIllness", e.target.checked)}
-                  style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
-                />
-                ป่วยเรื้อรัง
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  onChange={(e) => handleInputChange("bedridden", e.target.checked)}
-                  style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
-                />
-                ติดเตียง
-              </label>
-            </div>
-          </div>
-
+          <label>สภาพร่างกาย</label>
           <div>
-            <label>ช่วยเหลือตนเอง</label>
-            <div>
-              <label>
-                <input
-                  type="radio"
-                  name="selfHelp"
-                  value="ได้"
-                  onChange={(e) => handleInputChange("selfHelp", e.target.value)}
-                  style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
-                />
-                ได้
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="selfHelp"
-                  value="ไม่ได้"
-                  onChange={(e) => handleInputChange("selfHelp", e.target.value)}
-                  style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
-                />
-                ไม่ได้
-              </label>
-            </div>
+            <label>
+              <input
+                type="checkbox"
+                onChange={(e) => handleInputChange("normal", e.target.checked)}
+                style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
+              />
+              ปกติ
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                onChange={(e) => handleInputChange("disabled", e.target.checked)}
+                style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
+              />
+              พิการ
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                onChange={(e) => handleInputChange("chronicIllness", e.target.checked)}
+                style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
+              />
+              ป่วยเรื้อรัง
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                onChange={(e) => handleInputChange("bedridden", e.target.checked)}
+                style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
+              />
+              ติดเตียง
+            </label>
           </div>
+        </div>
+
+        <div>
+          <label>ช่วยเหลือตนเอง</label>
+          <div>
+            <label>
+              <input
+                type="radio"
+                name="selfHelp"
+                value="ได้"
+                onChange={(e) => handleInputChange("selfHelp", e.target.value)}
+                style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
+              />
+              ได้
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="selfHelp"
+                value="ไม่ได้"
+                onChange={(e) => handleInputChange("selfHelp", e.target.value)}
+                style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
+              />
+              ไม่ได้
+            </label>
+          </div>
+        </div>
 
 
           <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
@@ -220,9 +231,11 @@ const Part4 = () => {
             />
           </div>
 
-          <button type="submit" style={{ marginTop: '20px', padding: '10px' }}>
-            ยืนยัน
+          <button type="submit" disabled={isSubmitting} style={{ marginTop: '20px', padding: '10px' }}>
+            {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ยืนยัน'}
           </button>
+
+          {statusMessage && <p style={{ color: 'red', marginTop: '10px' }}>{statusMessage}</p>}
         </form>
 
       </div>

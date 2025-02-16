@@ -31,7 +31,6 @@ const Part2 = ({ onNext }) => {
   const handleNext = async () => {
     setIsSubmitting(true);
   
-    // ตรวจสอบว่ามีฟิลด์ว่างเปล่าและกำหนดค่าเป็น null
     const sanitizedData = Object.fromEntries(
       Object.entries(formData).map(([key, value]) => [
         key,
