@@ -152,9 +152,22 @@ const Part13 = () => {
             'เงินสมทบกองทุนการออมแห่งชาติ',
             'อื่นๆ',
           ])}
-          <button type="submit" style={{ marginTop: '20px', padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}>
-            Submit
-          </button>
+
+          {/* <div style={{display:'flex',justifyContent:'end'}}>
+            <button
+              disabled={isSubmitting}
+              style={{width:'90px',height:'40px', padding: '0px', backgroundColor: isSubmitting ? '#ccc' : '#D3E4CD', color: 'black', border: 'none', borderRadius: '22px', fontSize: '18px', fontWeight: 'bold', cursor: isSubmitting ? 'not-allowed' : 'pointer', transition: 'background 0.3s', marginTop: '40px' }}>
+              {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ถัดไป'}
+            </button>
+          </div> */}
+
+          <div style={{display:'flex',justifyContent:'end'}}>
+            <button type="submit"
+              style={{width:'90px',height:'40px', padding: '0px', color: 'black', border: 'none', borderRadius: '22px', fontSize: '18px', fontWeight: 'bold', transition: 'background 0.3s', marginTop: '40px',backgroundColor:'#FFE3E3'}}>
+              เสร็จสิ้น
+            </button>
+          </div>
+
         </form>
       </div>
     </div>

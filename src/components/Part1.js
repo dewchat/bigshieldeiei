@@ -204,12 +204,14 @@ const Part1 = ({ onNext }) => {
           />
         </div>
 
-        <button
-          onClick={handleNext}
-          disabled={isSubmitting}
-          style={{ width: '100%', padding: '12px', backgroundColor: isSubmitting ? '#ccc' : '#D3E4CD', color: 'black', border: 'none', borderRadius: '10px', fontSize: '18px', fontWeight: 'bold', cursor: isSubmitting ? 'not-allowed' : 'pointer', transition: 'background 0.3s', marginTop: '40px' }}>
-          {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ถัดไป'}
-        </button>
+        <div style={{display:'flex',justifyContent:'end'}}>
+          <button
+            onClick={handleNext}
+            disabled={isSubmitting}
+            style={{width:'90px',height:'40px', padding: '0px', backgroundColor: isSubmitting ? '#ccc' : '#D3E4CD', color: 'black', border: 'none', borderRadius: '22px', fontSize: '18px', fontWeight: 'bold', cursor: isSubmitting ? 'not-allowed' : 'pointer', transition: 'background 0.3s', marginTop: '40px' }}>
+            {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ถัดไป'}
+          </button>
+        </div>
 
         {statusMessage && <p style={{ color: 'red', marginTop: '10px', textAlign: 'center' }}>{statusMessage}</p>}
       </div>

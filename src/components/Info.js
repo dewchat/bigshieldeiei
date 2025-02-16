@@ -81,7 +81,7 @@ const Info = () => {
         style={{
           position: 'absolute',
           bottom: '10px',
-          right: '10px',
+          left: '10px',
           fontSize: '15px'
         }}
       >

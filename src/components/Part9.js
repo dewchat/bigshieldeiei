@@ -154,10 +154,15 @@ const Part9 = ({ onNext }) => {
           <div>
             <p>คะแนนรวม: {totalScore}</p>
           </div>
+          
+          <div style={{display:'flex',justifyContent:'end'}}>
+            <button
+              disabled={isSubmitting}
+              style={{width:'90px',height:'40px', padding: '0px', backgroundColor: isSubmitting ? '#ccc' : '#D3E4CD', color: 'black', border: 'none', borderRadius: '22px', fontSize: '18px', fontWeight: 'bold', cursor: isSubmitting ? 'not-allowed' : 'pointer', transition: 'background 0.3s', marginTop: '40px' }}>
+              {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ถัดไป'}
+            </button>
+          </div>
 
-          <button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ถัดไป'}
-          </button>
         </form>
 
         {statusMessage && <p style={{ color: 'red', marginTop: '10px' }}>{statusMessage}</p>}

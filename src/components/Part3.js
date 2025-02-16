@@ -171,11 +171,13 @@ const Part3 = ({ onNext }) => {
             />
           </div>
 
-          {/* Submit Button */}
-          <div style={{ marginTop: '20px' }}>
-            <button type="submit" disabled={isSubmitting} style={{ padding: '10px 20px', fontSize: '16px' }}>
-              {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ส่งข้อมูล'}
+         
+          <div style={{display:'flex',justifyContent:'end'}}>
+            <button type="submit" disabled={isSubmitting} 
+              style={{width:'90px',height:'40px', padding: '0px', backgroundColor: isSubmitting ? '#ccc' : '#D3E4CD', color: 'black', border: 'none', borderRadius: '22px', fontSize: '18px', fontWeight: 'bold', cursor: isSubmitting ? 'not-allowed' : 'pointer', transition: 'background 0.3s', marginTop: '40px' }}>
+              {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ถัดไป'}
             </button>
+
           </div>
         </form>
 
