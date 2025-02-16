@@ -3,41 +3,32 @@ import { useNavigate } from "react-router-dom";
 
 const Part4 = () => {
   const navigate = useNavigate();
-  const [familyMembers, setFamilyMembers] = useState([{ id: Date.now() }]);
+  const [member, setMember] = useState({ id: Date.now() });
 
-  const addMember = () => {
-    setFamilyMembers([...familyMembers, { id: Date.now() }]);
-  };
-
-  const handleInputChange = (id, field, value) => {
-    setFamilyMembers(
-      familyMembers.map((member) =>
-        member.id === id ? { ...member, [field]: value } : member
-      )
-    );
+  const handleInputChange = (field, value) => {
+    setMember({ ...member, [field]: value });
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // ข้อมูลที่ส่งไปยังฐานข้อมูล
-    const dataToSend = familyMembers.map((member) => ({
-      number: member.number,
-      idNumber: member.idNumber,
-      fullName: member.fullName,
-      birthDate: member.birthDate,
-      age: member.age,
+    const dataToSend = {
+      household_id: 1,
+      national_id: member.idNumber,
+      first_name: member.fullName?.split(' ')[0],
+      last_name: member.fullName?.split(' ')[1],
+      birth_date: member.birthDate,
       gender: member.gender,
       relationship: member.relationship,
       occupation: member.occupation,
-      monthlyIncome: member.monthlyIncome,
-      normal: member.normal,
-      disabled: member.disabled,
-      chronicIllness: member.chronicIllness,
-      bedridden: member.bedridden,
-      selfHelp: member.selfHelp,
-      note: member.note,
-    }));
+      monthly_income: member.monthlyIncome,
+      physical_status: member.disabled ? 'disabled' :
+                      member.chronicIllness ? 'chronically_ill' :
+                      member.bedridden ? 'bedridden' :
+                      member.normal ? 'normal' : 'unknown',
+      self_care: member.selfHelp === 'ได้',
+      is_respondent: member.note || ''
+    };
 
     try {
       const response = await fetch('http://localhost:3000/api/persons', {
@@ -49,7 +40,6 @@ const Part4 = () => {
       });
 
       if (response.ok) {
-        // ส่งข้อมูลสำเร็จ, นำทางไปหน้าอื่น
         navigate('/part5');
       } else {
         console.error('Error sending data:', response.statusText);
@@ -59,156 +49,183 @@ const Part4 = () => {
     }
   };
 
-  const handleBack = () => {
-    navigate(-1); // Navigate back to the previous page
-  };
-
   return (
     <div>
-      
-      <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize:'1.2rem', fontWeight:'bold' }}>
+      <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 'bold' }}>
         ส่วนที่ 1 - ข้อมูลทั่วไปของครัวเรือน
-      </div> 
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <h3>4. สมาชิกในครอบครัว (ผู้ที่อาศัยอยู่จริงในปัจจุบัน)</h3>
-        {familyMembers.map((member) => (
-          <div key={member.id} style={{ marginBottom: "20px" }}>
-            <label>
-              ที่
-              <input
-                type="text"
-                onChange={(e) => handleInputChange(member.id, "number", e.target.value)}
-              />
-            </label>
-            <label>
-              เลขบัตรประชาชน
-              <input
-                type="text"
-                onChange={(e) => handleInputChange(member.id, "idNumber", e.target.value)}
-              />
-            </label>
-            <label>
-              ชื่อ - สกุล
-              <input
-                type="text"
-                onChange={(e) => handleInputChange(member.id, "fullName", e.target.value)}
-              />
-            </label>
-            <label>
-              วัน/เดือน/ปีเกิด
+      <div style={{ padding: '10px 30px 10px 30px' }}>
+        <div>
+          <h3>4. สมาชิกในครอบครัว</h3>
+          <p>(ผู้ที่อาศัยอยู่จริงในปัจจุบัน)</p>
+        </div> 
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+            <label>ที่</label>
+            <input
+              type="text"
+              onChange={(e) => handleInputChange("number", e.target.value)}
+              style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+            <label>เลขบัตรประชาชน</label>
+            <input
+              type="text"
+              onChange={(e) => handleInputChange("idNumber", e.target.value)}
+              style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+            <label>ชื่อ - สกุล</label>
+            <input
+              type="text"
+              onChange={(e) => handleInputChange("fullName", e.target.value)}
+              style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
+            />
+          </div>
+        
+          <div style={{ display: 'flex', marginTop: '10px', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column' }}>
+              <label>วัน/เดือน/ปีเกิด</label>
               <input
                 type="date"
-                onChange={(e) => handleInputChange(member.id, "birthDate", e.target.value)}
+                onChange={(e) => handleInputChange("birthDate", e.target.value)}
+                style={{ width: '160px', border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
               />
-            </label>
-            <label>
-              อายุ
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column' }}>
+              <label>อายุ</label>
               <input
                 type="number"
-                onChange={(e) => handleInputChange(member.id, "age", e.target.value)}
+                onChange={(e) => handleInputChange("age", e.target.value)}
+                style={{ width: '160px', border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
               />
-            </label>
-            <label>
-              เพศ
-              <input
-                type="text"
-                onChange={(e) => handleInputChange(member.id, "gender", e.target.value)}
-              />
-            </label>
-            <label>
-              ลักษณะความสัมพันธ์
-              <input
-                type="text"
-                onChange={(e) => handleInputChange(member.id, "relationship", e.target.value)}
-              />
-            </label>
-            <label>
-              อาชีพ
-              <input
-                type="text"
-                onChange={(e) => handleInputChange(member.id, "occupation", e.target.value)}
-              />
-            </label>
-            <label>
-              รายได้ต่อเดือน
-              <input
-                type="number"
-                onChange={(e) => handleInputChange(member.id, "monthlyIncome", e.target.value)}
-              />
-            </label>
-            <label>
-              สภาพร่างกาย
-              <div>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => handleInputChange(member.id, "normal", e.target.checked)}
-                  />
-                  ปกติ
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => handleInputChange(member.id, "disabled", e.target.checked)}
-                  />
-                  พิการ
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => handleInputChange(member.id, "chronicIllness", e.target.checked)}
-                  />
-                  ป่วยเรื้อรัง
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    onChange={(e) => handleInputChange(member.id, "bedridden", e.target.checked)}
-                  />
-                  ติดเตียง
-                </label>
-              </div>
-            </label>
-            <label>
-              ช่วยเหลือตนเอง
-              <div>
-                <label>
-                  <input
-                    type="radio"
-                    name={`selfHelp-${member.id}`}
-                    value="ได้"
-                    onChange={(e) => handleInputChange(member.id, "selfHelp", e.target.value)}
-                  />
-                  ได้
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name={`selfHelp-${member.id}`}
-                    value="ไม่ได้"
-                    onChange={(e) => handleInputChange(member.id, "selfHelp", e.target.value)}
-                  />
-                  ไม่ได้
-                </label>
-              </div>
-            </label>
-            <label>
-              หมายเหตุ
-              <input
-                type="text"
-                onChange={(e) => handleInputChange(member.id, "note", e.target.value)}
-              />
-            </label>
+            </div>
           </div>
-        ))}
-        <button type="button" onClick={addMember} style={{ marginTop: '20px', padding: '10px' }}>
-          เพิ่มสมาชิก
-        </button>
-        <button type="submit" style={{ marginTop: '20px', padding: '10px' }}>
-          ยืนยัน
-        </button>
-      </form>
+
+          <div style={{ display: 'flex', marginTop: '10px', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column' }}>
+              <label>เพศ</label>
+              <input
+                type="text"
+                onChange={(e) => handleInputChange("gender", e.target.value)}
+                style={{ width: '160px', border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column' }}>
+              <label>ลักษณะความสัมพันธ์</label>
+              <input
+                type="text"
+                onChange={(e) => handleInputChange("relationship", e.target.value)}
+                style={{ width: '160px', border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+            <label>อาชีพ</label>
+            <input
+              type="text"
+              onChange={(e) => handleInputChange("occupation", e.target.value)}
+              style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
+            />
+          </div>
+
+          <div  style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+            <label>รายได้ต่อเดือน</label>
+            <input
+              type="number"
+              onChange={(e) => handleInputChange("monthlyIncome", e.target.value)}
+              style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
+            />
+          </div>
+
+          <div>
+            <label>สภาพร่างกาย</label>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  onChange={(e) => handleInputChange("normal", e.target.checked)}
+                  style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
+                />
+                ปกติ
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  onChange={(e) => handleInputChange("disabled", e.target.checked)}
+                  style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
+                />
+                พิการ
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  onChange={(e) => handleInputChange("chronicIllness", e.target.checked)}
+                  style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
+                />
+                ป่วยเรื้อรัง
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  onChange={(e) => handleInputChange("bedridden", e.target.checked)}
+                  style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
+                />
+                ติดเตียง
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label>ช่วยเหลือตนเอง</label>
+            <div>
+              <label>
+                <input
+                  type="radio"
+                  name="selfHelp"
+                  value="ได้"
+                  onChange={(e) => handleInputChange("selfHelp", e.target.value)}
+                  style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
+                />
+                ได้
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="selfHelp"
+                  value="ไม่ได้"
+                  onChange={(e) => handleInputChange("selfHelp", e.target.value)}
+                  style={{ width: '20px', height: '20px', marginRight: '5px' }} // Adjust size here
+                />
+                ไม่ได้
+              </label>
+            </div>
+          </div>
+
+
+          <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+            <label>หมายเหตุ</label>
+            <input
+              type="text"
+              onChange={(e) => handleInputChange("note", e.target.value)}
+              style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
+            />
+          </div>
+
+          <button type="submit" style={{ marginTop: '20px', padding: '10px' }}>
+            ยืนยัน
+          </button>
+        </form>
+
+      </div>
     </div>
   );
 };

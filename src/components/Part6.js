@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Part6 = () => {
   const navigate = useNavigate();
@@ -11,39 +12,56 @@ const Part6 = () => {
     q5: { value: '', note: '' },
   });
 
-  const [totalScore, setTotalScore] = useState(0); // Store the total score
+ const [totalScore, setTotalScore] = useState(0); 
+ const [householdId, setHouseholdId] = useState(''); 
+ 
+   const calculateScore = () => {
+     return Object.values(answers).reduce((total, { value }) => total + parseInt(value || 0, 10), 0);
+   };
+ 
+   useEffect(() => {
+     setTotalScore(calculateScore());
+   }, [answers]);
+ 
+   const handleChange = (e) => {
+     const { name, value, dataset } = e.target;
+     setAnswers((prevAnswers) => ({
+       ...prevAnswers,
+       [name]: {
+         ...prevAnswers[name],
+         [dataset.type === 'note' ? 'note' : 'value']: value,
+       },
+     }));
+   };
+ 
+   const handleSubmit = async (e) => {
+     e.preventDefault();
+     console.log('คะแนนรวมทั้งหมด:', totalScore);
+     console.log('หมายเหตุ:', answers);
 
-  // Calculate the total score
-  const calculateScore = () => {
-    return Object.values(answers).reduce((total, { value }) => total + parseInt(value || 0, 10), 0);
+     const data = {
+      household_id: householdId, 
+      assessment_date: new Date().toISOString(),
+      q1_score: answers.q1.value,
+      q1_note: answers.q1.note,
+      q2_score: answers.q2.value,
+      q2_note: answers.q2.note,
+      q3_score: answers.q3.value,
+      q3_note: answers.q3.note,
+      q4_score: answers.q4.value,
+      q4_note: answers.q4.note,
+      q5_score: answers.q5.value,
+      q5_note: answers.q5.note,
+    };
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/income-employment-assessment', data);
+      console.log('ข้อมูลที่ส่งไป:', response.data); 
+    } catch (error) {
+      console.error('เกิดข้อผิดพลาดในการส่งข้อมูล:', error);
+    }
   };
 
-  // Update the total score whenever answers change
-  useEffect(() => {
-    setTotalScore(calculateScore());
-  }, [answers]);
-
-  // Function to handle changes to answers
-  const handleChange = (e) => {
-    const { name, value, dataset } = e.target;
-    setAnswers((prevAnswers) => ({
-      ...prevAnswers,
-      [name]: {
-        ...prevAnswers[name],
-        [dataset.type === 'note' ? 'note' : 'value']: value,
-      },
-    }));
-  };
-
-  // Submit form handler
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Total score:', totalScore);
-    console.log('Notes:', answers);
-    navigate('/part7'); // Navigate to Part7
-  };
-
-  // Render multiple-choice question with radio buttons
   const renderRadioButtons = (question, name) => (
     <div style={{ marginBottom: '20px' }}>
       <label>{question}</label>
@@ -68,7 +86,7 @@ const Part6 = () => {
           </label>
         ))}
       </div>
-      <div style={{ marginTop: '10px' }}>
+      <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
         <label>หมายเหตุ:</label>
         <textarea
           name={name}
@@ -76,7 +94,7 @@ const Part6 = () => {
           value={answers[name].note}
           onChange={handleChange}
           rows="1"
-          style={{ width: '100%' }}
+          style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
         />
       </div>
     </div>
@@ -113,31 +131,29 @@ const Part6 = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
-          {renderRadioButtons(
-            '1. สมาชิกในครอบครัวของท่านสามารถหารายได้เลี้ยงดูครอบครัวได้ทุกคน',
-            'q1'
-          )}
-          {renderRadioButtons(
-            '2. สมาชิกในครอบครัวของท่านมีการออมเงินในรูปแบบต่างๆ เช่น กองทุนหมู่บ้าน สัจจะวันละบาท สลากออมสิน',
-            'q2'
-          )}
-          {renderRadioButtons(
-            '3. สมาชิกในครอบครัวของท่านมีรายได้เพียงพอต่อการดําเนินชีวิต',
-            'q3'
-          )}
-          {renderRadioButtons(
-            '4. สมาชิกในครอบครัวของท่านรับรู้และมีการวางแผนการชําระหนี้สิน',
-            'q4'
-          )}
-          {renderRadioButtons(
-            '5. สมาชิกในครอบครัวของท่านมีความสามารถในการจัดการชําระหนี้สินได้ตรงเวลา',
-            'q5'
-          )}
+          
+          <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+            <label>Household ID:</label>
+            <input
+              type="text"
+              value={householdId}
+              onChange={(e) => setHouseholdId(e.target.value)}
+              style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
+              required
+            />
+          </div>
+
+          {renderRadioButtons('1. สมาชิกในครอบครัวของท่านสามารถหารายได้เลี้ยงดูครอบครัวได้ทุกคน', 'q1')}
+          {renderRadioButtons('2. สมาชิกในครอบครัวของท่านมีการออมเงินในรูปแบบต่างๆ เช่น กองทุนหมู่บ้าน สัจจะวันละบาท สลากออมสิน', 'q2')}
+          {renderRadioButtons('3. สมาชิกในครอบครัวของท่านมีรายได้เพียงพอต่อการดําเนินชีวิต', 'q3')}
+          {renderRadioButtons('4. สมาชิกในครอบครัวของท่านรับรู้และมีการวางแผนการชําระหนี้สิน', 'q4')}
+          {renderRadioButtons('5. สมาชิกในครอบครัวของท่านมีความสามารถในการจัดการชําระหนี้สินได้ตรงเวลา', 'q5')}
 
           <div>
             <p>คะแนนรวม: {totalScore}</p>
           </div>
-          
+
+          <button type="submit">ส่งข้อมูล</button>
         </form>
 
       </div>

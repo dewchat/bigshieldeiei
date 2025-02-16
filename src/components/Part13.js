@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Part13 = () => {
-  const navigate = useNavigate(); // ใช้สำหรับเปลี่ยนหน้า
+  const navigate = useNavigate();
   const [answers, setAnswers] = useState({});
-  const [otherInput, setOtherInput] = useState(''); // State for "อื่นๆ" input field
+  const [otherInput, setOtherInput] = useState('');
+  const [householdId, setHouseholdId] = useState('');
 
   const handleCheckboxChange = (e) => {
     const { name, value, checked } = e.target;
     setAnswers((prevAnswers) => ({
       ...prevAnswers,
       [name]: {
-        ...prevAnswers[name], 
+        ...prevAnswers[name],
         [value]: checked,
       },
     }));
@@ -21,14 +23,22 @@ const Part13 = () => {
     setOtherInput(e.target.value);
     setAnswers((prevAnswers) => ({
       ...prevAnswers,
-      'อื่นๆ': e.target.value, // Add "อื่นๆ" input to the answers
+      'อื่นๆ': e.target.value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('คำตอบทั้งหมด:', answers);
-    navigate('/next-page');
+    try {
+      const response = await axios.post('http://localhost:3000/api/household-social-welfare', {
+        household_id: householdId,
+        ...answers,
+      });
+      console.log('Data sent successfully:', response.data);
+      navigate('/next-page');
+    } catch (error) {
+      console.error('Error sending data:', error);
+    }
   };
 
   const renderCheckboxGroup = (groupName, options) => (
@@ -63,11 +73,25 @@ const Part13 = () => {
 
   return (
     <div>
-      <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize:'1.03rem', fontWeight:'bold' }}>
-       ส่วนที่ 3 - การเข้าถึงและสวัสดิการสังคมที่ได้รับ
-       </div> 
-      <div style={{ padding:'10px 30px 10px 30px', }}>
+      <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.03rem', fontWeight: 'bold' }}>
+        ส่วนที่ 3 - การเข้าถึงและสวัสดิการสังคมที่ได้รับ
+      </div>
+      <div style={{ padding: '10px 30px 10px 30px' }}>
         <form onSubmit={handleSubmit}>
+          <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+            <label>Household ID:</label>
+            <input 
+              type="text" 
+              value={householdId}
+              onChange={(e) => setHouseholdId(e.target.value)} 
+              style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
+              required 
+            />
+          </div>
+
+          <p>จงใส่เครื่องหมาย / ใน    หน้าสวัสดิการสังคมที่
+          ครัวเรือนได้รับการช่วยเหลือตามกลุ่มเป้าหมาย</p>
+
           {renderCheckboxGroup('1. กลุ่มเป้าหมาย เด็กและเยาวชนสวัสดิการสังคมที่ได้รับ', [
             'เงินอุดหนุนเด็กแรกเกิด',
             'เงินสงเคราะห์บุตรประกันสังคม',
@@ -128,6 +152,9 @@ const Part13 = () => {
             'เงินสมทบกองทุนการออมแห่งชาติ',
             'อื่นๆ',
           ])}
+          <button type="submit" style={{ marginTop: '20px', padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}>
+            Submit
+          </button>
         </form>
       </div>
     </div>

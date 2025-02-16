@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const Part1 = ({ onNext }) => {
   const [formData, setFormData] = useState({
-    household_id:'',
+    household_id: '',
     first_last_name: '',
     national_id: '',
     no_national_id_reason: '',
@@ -23,13 +23,23 @@ const Part1 = ({ onNext }) => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleAgeChange = (e) => {
+    const { value } = e.target;
+    // ตรวจสอบว่าเป็นตัวเลขหรือไม่
+    if (!isNaN(value) && value !== '') {
+      setFormData({ ...formData, age: parseInt(value, 10) });
+    } else {
+      setFormData({ ...formData, age: '' });
+    }
+  };
+
   const handleNext = async () => {
     setIsSubmitting(true);
 
     const sanitizedData = Object.fromEntries(
       Object.entries(formData).map(([key, value]) => [
         key,
-        value.trim() === '' || value === null ? null : value,
+        value === '' || value === null ? null : value,
       ])
     );
 
@@ -53,136 +63,136 @@ const Part1 = ({ onNext }) => {
 
   return (
     <div>
-      <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize:'1.2rem', fontWeight:'bold' }}>
+      <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 'bold' }}>
         ส่วนที่ 1 - ข้อมูลทั่วไปของครัวเรือน
       </div>
-  
-      <div style={{ padding:'10px 30px 10px 30px'}}>
+
+      <div style={{ padding: '10px 30px 10px 30px' }}>
         <div>
           <h3>1. ข้อมูลผู้ตอบแบบสอบถาม</h3>
-          <p style={{color:'red'}}>(ข้อมูลที่กรอกจะเป็นความลับทั้งหมด)</p>
+          <p style={{ color: 'red' }}>(ข้อมูลที่กรอกจะเป็นความลับทั้งหมด)</p>
         </div>
 
-        <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column', marginBottom:'10px'}}>
-          <label htmlFor='household_id'>household_id</label>
+        <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+          <label>household_id</label>
           <input
             type='text'
             name='household_id'
             value={formData.household_id}
             onChange={handleChange}
-            style={{border:'1px solid gray', borderRadius:'8px', height: '26px', padding: '4px 7px 4px 10px'}}
+            style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
           />
         </div>
 
-        <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column', marginBottom:'10px'}}>
-          <label htmlFor='first_last_name'>ชื่อ - นามสกุล</label>
+        <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+          <label>ชื่อ - นามสกุล</label>
           <input
             type='text'
             name='first_last_name'
             value={formData.first_last_name}
             onChange={handleChange}
-            style={{border:'1px solid gray', borderRadius:'8px', height: '26px', padding: '4px 7px 4px 10px'}}
+            style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
           />
         </div>
 
-        <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column', marginBottom:'10px'}}>
-          <label htmlFor='national_id'>เลขที่บัตรประชาชน</label>
+        <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+          <label>เลขที่บัตรประชาชน</label>
           <input
             type='text'
             name='national_id'
             value={formData.national_id}
             onChange={handleChange}
-            style={{border:'1px solid gray', borderRadius:'8px', height: '26px', padding: '4px 7px 4px 10px'}}
+            style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
           />
         </div>
 
-        <div style={{display: 'flex',gap: '0.8rem', marginBottom:'10px', alignItems:'center', marginTop:'20px'}}>
-          <label htmlFor='no_national_id_reason'>กรณีไม่มี เนื่องจาก</label>
+        <div style={{ display: 'flex', gap: '0.8rem', marginBottom: '10px', alignItems: 'center', marginTop: '20px' }}>
+          <label>กรณีไม่มี เนื่องจาก</label>
           <input
             type='text'
             name='no_national_id_reason'
             value={formData.no_national_id_reason}
             onChange={handleChange}
-            style={{border:'1px solid gray', borderRadius:'8px', height: '26px', padding: '4px 7px 4px 10px',width:'217px'}}
+            style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px', width: '217px' }}
           />
         </div>
 
-        <div style={{display: 'flex', marginTop:'10px',justifyContent:'space-between'}}>
-          <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column'}}>
-            <label htmlFor='birth_date'>วัน/เดือน/ปีเกิด</label>
+        <div style={{ display: 'flex', marginTop: '10px', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column' }}>
+            <label>วัน/เดือน/ปีเกิด</label>
             <input
               type='date'
               name='birth_date'
               value={formData.birth_date}
               onChange={handleChange}
-              style={{width:'160px', border:'1px solid gray', borderRadius:'8px', height: '26px', padding: '4px 7px 4px 10px'}}
+              style={{ width: '160px', border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
             />
           </div>
-          <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column'}}>
-            <label htmlFor='age'>อายุ</label>
+          <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column' }}>
+            <label>อายุ</label>
             <input
-              type='integer'
+              type='number'
               name='age'
               value={formData.age}
-              onChange={handleChange}
-              style={{width:'160px', border:'1px solid gray', borderRadius:'8px', height: '26px', padding: '4px 7px 4px 10px'}}
+              onChange={handleAgeChange}
+              style={{ width: '160px', border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
             />
-          </div> 
+          </div>
         </div>
 
-        <div style={{display: 'flex', marginTop:'10px',justifyContent:'space-between'}}>
-          <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column'}}>
-            <label htmlFor='gender'>เพศ</label>
+        <div style={{ display: 'flex', marginTop: '10px', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column' }}>
+            <label>เพศ</label>
             <input
               type='text'
               name='gender'
               value={formData.gender}
               onChange={handleChange}
-              style={{width:'160px',border:'1px solid gray', borderRadius:'8px', height: '26px', padding: '4px 7px 4px 10px'}}
+              style={{ width: '160px', border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
             />
           </div>
-          <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column'}}>
-            <label htmlFor='relationship'>ลักษณะความสัมพันธ์</label>
+          <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column' }}>
+            <label>ลักษณะความสัมพันธ์</label>
             <input
               type='text'
               name='relationship'
               value={formData.relationship}
               onChange={handleChange}
-              style={{width:'160px',border:'1px solid gray', borderRadius:'8px', height: '26px', padding: '4px 7px 4px 10px'}}
+              style={{ width: '160px', border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
             />
           </div>
         </div>
 
-        <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column', marginBottom:'10px'}}>
-          <label htmlFor='education_level'>ระดับการศึกษา</label>
+        <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+          <label>ระดับการศึกษา</label>
           <input
             type='text'
             name='education_level'
             value={formData.education_level}
             onChange={handleChange}
-            style={{border:'1px solid gray', borderRadius:'8px', height: '26px', padding: '4px 7px 4px 10px'}}
+            style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
           />
         </div>
 
-        <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column', marginBottom:'10px'}}>
-          <label htmlFor='phone'>โทรศัพท์</label>
+        <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+          <label>โทรศัพท์</label>
           <input
             type='text'
             name='phone'
             value={formData.phone}
             onChange={handleChange}
-            style={{border:'1px solid gray', borderRadius:'8px', height: '26px', padding: '4px 7px 4px 10px'}}
+            style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
           />
         </div>
 
-        <div style={{display: 'flex',gap: '0.8rem', flexDirection: 'column', marginBottom:'10px'}}>
-          <label htmlFor='mobile_phone'>โทรศัพท์มือถือ</label>
+        <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+          <label>โทรศัพท์มือถือ</label>
           <input
             type='text'
             name='mobile_phone'
             value={formData.mobile_phone}
             onChange={handleChange}
-            style={{border:'1px solid gray', borderRadius:'8px', height: '26px', padding: '4px 7px 4px 10px'}}
+            style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
           />
         </div>
 

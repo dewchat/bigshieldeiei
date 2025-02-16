@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // เพิ่มการนำเข้า axios
+import axios from 'axios';
 
 const Part5 = () => {
   const navigate = useNavigate();
@@ -12,19 +12,17 @@ const Part5 = () => {
     q5: { value: '', note: '' },
   });
 
-  const [totalScore, setTotalScore] = useState(0); // เก็บคะแนนรวม
+  const [totalScore, setTotalScore] = useState(0); 
+  const [householdId, setHouseholdId] = useState('');
 
-  // ฟังก์ชันคำนวณคะแนนรวม
   const calculateScore = () => {
     return Object.values(answers).reduce((total, { value }) => total + parseInt(value || 0, 10), 0);
   };
 
-  // อัปเดตคะแนนรวมทุกครั้งที่ answers เปลี่ยนแปลง
   useEffect(() => {
     setTotalScore(calculateScore());
   }, [answers]);
 
-  // ฟังก์ชันสำหรับเปลี่ยนค่าของคำตอบ
   const handleChange = (e) => {
     const { name, value, dataset } = e.target;
     setAnswers((prevAnswers) => ({
@@ -36,16 +34,14 @@ const Part5 = () => {
     }));
   };
 
-  // ฟังก์ชันสำหรับการส่งข้อมูลไปยัง API
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('คะแนนรวมทั้งหมด:', totalScore);
     console.log('หมายเหตุ:', answers);
 
-    // เตรียมข้อมูลที่จะส่งไปยัง API
     const data = {
-      household_id: 1, // ใส่ค่า household_id ที่เหมาะสม
-      assessment_date: new Date().toISOString(), // ใช้วันที่ปัจจุบัน
+      household_id: householdId, 
+      assessment_date: new Date().toISOString(),
       q1_score: answers.q1.value,
       q1_note: answers.q1.note,
       q2_score: answers.q2.value,
@@ -59,15 +55,13 @@ const Part5 = () => {
     };
 
     try {
-      // ส่งข้อมูลไปยัง API
       const response = await axios.post('http://localhost:3000/api/family-relationships-assessment', data);
-      console.log('ข้อมูลที่ส่งไป:', response.data); // แสดงข้อมูลที่ตอบกลับจาก API
+      console.log('ข้อมูลที่ส่งไป:', response.data);
     } catch (error) {
       console.error('เกิดข้อผิดพลาดในการส่งข้อมูล:', error);
     }
   };
 
-  // ฟังก์ชันสร้างคำถามแบบหลายตัวเลือก
   const renderRadioButtons = (question, name) => (
     <div style={{ marginBottom: '20px' }}>
       <label>{question}</label>
@@ -92,7 +86,8 @@ const Part5 = () => {
           </label>
         ))}
       </div>
-      <div style={{ marginTop: '10px' }}>
+
+      <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
         <label>หมายเหตุ:</label>
         <textarea
           name={name}
@@ -100,7 +95,7 @@ const Part5 = () => {
           value={answers[name].note}
           onChange={handleChange}
           rows="1"
-          style={{ width: '100%' }}
+          style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
         />
       </div>
     </div>
@@ -135,6 +130,17 @@ const Part5 = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
+          <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+            <label>Household ID:</label>
+            <input
+              type="text"
+              value={householdId}
+              onChange={(e) => setHouseholdId(e.target.value)}
+              style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
+              required
+            />
+          </div>
+
           {renderRadioButtons('1. สมาชิกในครอบครัวของท่านมีการพูดคุยสื่อสารกันในช่วงเวลาที่อยู่ด้วยกัน', 'q1')}
           {renderRadioButtons('2. สมาชิกในครอบครัวของท่านมีการแสดงความเอาใจใส่ซึ่งกันและกัน เช่น การให้กำลังใจ การชื่นชม', 'q2')}
           {renderRadioButtons('3. สมาชิกในครอบครัวของท่านมีความเชื่อใจ หรือไว้วางใจที่จะเล่าเรื่องต่างๆ ให้กันและกันฟัง', 'q3')}
@@ -146,7 +152,6 @@ const Part5 = () => {
           </div>
 
           <button type="submit">ส่งข้อมูล</button>
-
         </form>
       </div>
     </div>

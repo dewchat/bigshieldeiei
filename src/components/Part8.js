@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Part8 = () => {
-  const navigate = useNavigate(); // ใช้สำหรับเปลี่ยนหน้า
+  const navigate = useNavigate(); 
   const [answers, setAnswers] = useState({
     q1: { value: '', note: '' },
     q2: { value: '', note: '' },
@@ -11,37 +12,60 @@ const Part8 = () => {
     q5: { value: '', note: '' },
   });
 
-  // ฟังก์ชันสำหรับเปลี่ยนค่าของคำตอบในแต่ละข้อ
+  const [totalScore, setTotalScore] = useState(0);
+  const [householdId, setHouseholdId] = useState('');
+
+  const calculateScore = () => {
+    return Object.values(answers).reduce((total, { value }) => total + (parseInt(value, 10) || 0), 0);
+  };
+
+  useEffect(() => {
+    setTotalScore(calculateScore());
+  }, [answers]);
+
   const handleChange = (e) => {
     const { name, value, dataset } = e.target;
-    if (dataset.type === 'note') {
-      setAnswers({
-        ...answers,
-        [name]: { ...answers[name], note: value },
-      });
-    } else {
-      setAnswers({
-        ...answers,
-        [name]: { ...answers[name], value },
-      });
+    setAnswers((prevAnswers) => {
+      const updatedAnswers = {
+        ...prevAnswers,
+        [name]: {
+          ...prevAnswers[name],
+          [dataset.type === 'note' ? 'note' : 'value']: value,
+        },
+      };
+      setTotalScore(calculateScore(updatedAnswers));
+      return updatedAnswers;
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log('คะแนนรวมทั้งหมด:', totalScore);
+    console.log('หมายเหตุ:', answers);
+
+    const data = {
+      household_id: householdId,
+      assessment_date: new Date().toISOString(),
+      q1_score: answers.q1.value,
+      q1_note: answers.q1.note,
+      q2_score: answers.q2.value,
+      q2_note: answers.q2.note,
+      q3_score: answers.q3.value,
+      q3_note: answers.q3.note,
+      q4_score: answers.q4.value,
+      q4_note: answers.q4.note,
+      q5_score: answers.q5.value,
+      q5_note: answers.q5.note,
+    };
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/security-assessment', data);
+      console.log('ข้อมูลที่ส่งไป:', response.data);
+    } catch (error) {
+      console.error('เกิดข้อผิดพลาดในการส่งข้อมูล:', error);
     }
   };
 
-  // ฟังก์ชันคำนวณคะแนนรวม
-  const calculateScore = () => {
-    return Object.values(answers).reduce((total, { value }) => total + parseInt(value || 0, 10), 0);
-  };
-
-  // ฟังก์ชันสำหรับการส่งข้อมูล
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const totalScore = calculateScore(); // คำนวณคะแนนรวม
-    console.log('คะแนนรวมทั้งหมด:', totalScore);
-    console.log('หมายเหตุ:', answers);
-    navigate('/part9'); // เปลี่ยนหน้าไปยังหน้าถัดไป
-  };
-
-  // ฟังก์ชันสร้างคำถามแบบหลายตัวเลือก
   const renderRadioButtons = (question, name) => (
     <div style={{ marginBottom: '20px' }}>
       <label>{question}</label>
@@ -66,7 +90,7 @@ const Part8 = () => {
           </label>
         ))}
       </div>
-      <div style={{ marginTop: '10px' }}>
+      <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
         <label>หมายเหตุ:</label>
         <textarea
           name={name}
@@ -74,7 +98,7 @@ const Part8 = () => {
           value={answers[name].note}
           onChange={handleChange}
           rows="1"
-          style={{ width: '100%' }}
+          style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
         />
       </div>
     </div>
@@ -98,38 +122,36 @@ const Part8 = () => {
           backgroundColor: '#f9f9f9',
           margin: '20px 0'
         }}>
-          <p style={{ margin: '5px 0' }}>ค่าคะแนน</p>
-          <p style={{ margin: '5px 0' }}>3 = มีความรู้สึกมั่นคงปลอดภัยในชีวิตมาก</p>
-          <p style={{ margin: '5px 0' }}>2 = มีความรู้สึกมั่นคง ปลอดภัยในชีวิตปานกลาง</p>
-          <p style={{ margin: '5px 0' }}>1 = มีน้อยความรู้สึกมั่นคง ปลอดภัยในชีวิต</p>
-          <p style={{ margin: '5px 0' }}>0 =  ไม่มีความรู้สึกมั่นคง ปลอดภัยในชีวิต </p>
+          <p>ค่าคะแนน</p>
+          <p>3 = มีความรู้สึกมั่นคงปลอดภัยในชีวิตมาก</p>
+          <p>2 = มีความรู้สึกมั่นคง ปลอดภัยในชีวิตปานกลาง</p>
+          <p>1 = มีน้อยความรู้สึกมั่นคง ปลอดภัยในชีวิต</p>
+          <p>0 = ไม่มีความรู้สึกมั่นคง ปลอดภัยในชีวิต</p>
         </div>
 
         <form onSubmit={handleSubmit}>
-          {renderRadioButtons(
-            '1. ครอบครัวของท่านถือเป็นพื้นที่ที่มีความสุขอยู่แล้วบายใจ ทั้งด้านร่างกาย และจิตใจ',
-            'q1'
-          )}
-          {renderRadioButtons(
-            '2.สมาชิกในครอบครัวของท่านให้อิสระและสามารถทําตามความต้องการของตนเองได้',
-            'q2'
-          )}
-          {renderRadioButtons(
-            '3. สมาชิกในครอบครัวของท่านให้ความสําคัญกับการยอมรับตัวตน เช่น เป็นผู้พิการ เป็นเพศที่สาม',
-            'q3'
-          )}
-          {renderRadioButtons(
-            '4. สมาชิกในครอบครัวของท่านมีการพูดคุยแลกเปลี่ยนความคิดเห็นซึ่งกันและกัน',
-            'q4'
-          )}
-          {renderRadioButtons(
-            '5. สมาชิกในครอบครัวสามารถอยู่ร่วมกับคนในชุมชนได้',
-            'q5'
-          )}
+        <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
+            <label>Household ID:</label>
+            <input
+              type="text"
+              value={householdId}
+              onChange={(e) => setHouseholdId(e.target.value)}
+              style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
+              required
+            />
+          </div>
+
+          {renderRadioButtons('1. ครอบครัวของท่านถือเป็นพื้นที่ที่มีความสุขอยู่แล้วบายใจ ทั้งด้านร่างกาย และจิตใจ', 'q1')}
+          {renderRadioButtons('2. สมาชิกในครอบครัวของท่านให้อิสระและสามารถทําตามความต้องการของตนเองได้', 'q2')}
+          {renderRadioButtons('3. สมาชิกในครอบครัวของท่านให้ความสําคัญกับการยอมรับตัวตน เช่น เป็นผู้พิการ เป็นเพศที่สาม', 'q3')}
+          {renderRadioButtons('4. สมาชิกในครอบครัวของท่านมีการพูดคุยแลกเปลี่ยนความคิดเห็นซึ่งกันและกัน', 'q4')}
+          {renderRadioButtons('5. สมาชิกในครอบครัวสามารถอยู่ร่วมกับคนในชุมชนได้', 'q5')}
 
           <div>
-            <p>คะแนนเฉลี่ย {calculateScore()}</p>
+            <p>คะแนนรวม: {totalScore}</p>
           </div>
+
+          <button type="submit">ส่งข้อมูล</button>
         </form>
       </div>  
     </div>
