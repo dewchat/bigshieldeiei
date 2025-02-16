@@ -69,7 +69,7 @@ const Part3 = () => {
       // Handle network error (e.g., show an error message)
     }
   };
- 
+
   return (
     <div>
 
