@@ -35,6 +35,7 @@ const Part1 = ({ onNext }) => {
   const handleNext = async () => {
     setIsSubmitting(true);
 
+    // แปลงช่องที่ว่างเปล่าให้เป็น null
     const sanitizedData = Object.fromEntries(
       Object.entries(formData).map(([key, value]) => [
         key,
@@ -52,7 +53,7 @@ const Part1 = ({ onNext }) => {
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
       setStatusMessage('ข้อมูลถูกบันทึกสำเร็จ!');
-      onNext();
+      onNext(); // ไปยังส่วนถัดไป
     } catch (error) {
       setStatusMessage('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
     } finally {
@@ -71,7 +72,19 @@ const Part1 = ({ onNext }) => {
 
   return (
     <div>
-      <div style={{ backgroundColor: '#789DBC', margin: 0, height: '70px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', fontWeight: 'bold' }}>
+      <div
+        style={{
+          backgroundColor: '#789DBC',
+          margin: 0,
+          height: '70px',
+          textAlign: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '1.2rem',
+          fontWeight: 'bold',
+        }}
+      >
         ส่วนที่ 1 - ข้อมูลทั่วไปของครัวเรือน
       </div>
 
@@ -204,11 +217,25 @@ const Part1 = ({ onNext }) => {
           />
         </div>
 
-        <div style={{display:'flex',justifyContent:'end'}}>
+        <div style={{ display: 'flex', justifyContent: 'end' }}>
           <button
             onClick={handleNext}
             disabled={isSubmitting}
-            style={{width:'90px',height:'40px', padding: '0px', backgroundColor: isSubmitting ? '#ccc' : '#D3E4CD', color: 'black', border: 'none', borderRadius: '22px', fontSize: '18px', fontWeight: 'bold', cursor: isSubmitting ? 'not-allowed' : 'pointer', transition: 'background 0.3s', marginTop: '40px' }}>
+            style={{
+              width: '90px',
+              height: '40px',
+              padding: '0px',
+              backgroundColor: isSubmitting ? '#ccc' : '#D3E4CD',
+              color: 'black',
+              border: 'none',
+              borderRadius: '22px',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              cursor: isSubmitting ? 'not-allowed' : 'pointer',
+              transition: 'background 0.3s',
+              marginTop: '40px',
+            }}
+          >
             {isSubmitting ? 'กำลังส่งข้อมูล...' : 'ถัดไป'}
           </button>
         </div>
