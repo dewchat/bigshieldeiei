@@ -61,7 +61,6 @@ const Part13 = () => {
     e.preventDefault();
     try {
       const data = {
-        household_id: householdId,
         assessment_date: new Date().toISOString().split('T')[0], // ใช้วันที่ปัจจุบัน
         // กลุ่มเป้าหมาย: เด็กและเยาวชน
         child_benefit: childBenefit,

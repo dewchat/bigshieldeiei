@@ -1,19 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Part1 = ({ onNext }) => {
-  const [formData, setFormData] = useState({
-    household_id: '',
-    first_last_name: '',
-    national_id: '',
-    no_national_id_reason: '',
-    birth_date: '',
-    age: '',
-    gender: '',
-    relationship: '',
-    education_level: '',
-    phone: '',
-    mobile_phone: '',
-  });
+const Part1 = ({ onNext, formData, setFormData }) => {  
 
   const [statusMessage, setStatusMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -103,17 +90,6 @@ const Part1 = ({ onNext }) => {
         <div>
           <h3>1. ข้อมูลผู้ตอบแบบสอบถาม</h3>
           <p style={{ color: 'red' }}>(ข้อมูลที่กรอกจะเป็นความลับทั้งหมด)</p>
-        </div>
-
-        <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>
-          <label>household_id</label>
-          <input
-            type='text'
-            name='household_id'
-            value={formData.household_id}
-            onChange={handleChange}
-            style={{ border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
-          />
         </div>
 
         <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column', marginBottom: '10px' }}>

@@ -41,7 +41,6 @@ const Part11 = ({ onNext }) => {
     setIsSubmitting(true);
 
     const data = {
-      household_id: householdId, 
       assessment_date: new Date().toISOString(), 
       q1_score: answers.q1.value,
       q1_note: answers.q1.note,

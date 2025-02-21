@@ -72,7 +72,6 @@ const Part4 = ({ onNext }) => {
   // ส่งข้อมูลสมาชิกทีละคน
   const sendMemberData = async (member) => {
     const dataToSend = {
-      household_id: 1,
       national_id: member.idNumber,
       first_name: member.fullName?.split(" ")[0],
       last_name: member.fullName?.split(" ")[1],

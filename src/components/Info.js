@@ -18,6 +18,20 @@ const Info = () => {
   const [currentPart, setCurrentPart] = useState(1);
   const navigate = useNavigate();
 
+  const [formData, setFormData] = useState({
+      first_last_name: '',
+      national_id: '',
+      no_national_id_reason: '',
+      birth_date: '',
+      age: '',
+      gender: '',
+      relationship: '',
+      education_level: '',
+      phone: '',
+      mobile_phone: '',
+    });
+
+
   const nextPart = () => {
     if (currentPart < 13) {
       setCurrentPart(currentPart + 1);
@@ -43,7 +57,7 @@ const Info = () => {
 
   return (
     <div style={{ maxWidth: '800px', margin: 'auto', fontFamily: 'Arial', position: 'relative' }}>
-      {currentPart === 1 && <Part1 onNext={nextPart} />}
+      {currentPart === 1 && <Part1 onNext={nextPart} formData={formData} setFormData={setFormData}/>}
       {currentPart === 2 && <Part2 onNext={nextPart} />}
       {currentPart === 3 && <Part3 onNext={nextPart} />}
       {currentPart === 4 && <Part4 onNext={nextPart} />}

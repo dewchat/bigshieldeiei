@@ -51,7 +51,6 @@ const Part3 = ({ onNext }) => {
     setIsSubmitting(true);
 
     const data = {
-      household_id: 1, // เปลี่ยนเป็น dynamic ID ตามความเหมาะสม
       own_with_spouse: formData.selectedOption === 'มีที่อยู่อาศัยเป็นของตนเองและมั่นคงถาวร',
       own_without_spouse: formData.selectedOption === 'มีที่อยู่อาศัยเป็นของตนเองแต่ไม่มั่นคงถาวร',
       living_with_others: formData.selectedOption === 'อาศัยอยู่กับผู้อื่น',
