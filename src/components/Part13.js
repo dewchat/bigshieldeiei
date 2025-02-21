@@ -408,7 +408,7 @@ const Part13 = () => {
                 checked={aidsAllowance}
                 onChange={(e) => setAidsAllowance(e.target.checked)}
               />
-              เงินเบี้ยยังชีพผู้ป่วยเอดส์
+              เบี้ยผู้ป่วยเอดส์
             </label>
           </div>
 
