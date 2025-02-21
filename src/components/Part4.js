@@ -526,7 +526,7 @@ const Part4 = ({ onNext }) => {
                 border: "none",
                 borderRadius: "22px",
                 fontSize: "18px",
-                fontWeight: "bold",
+                fontWeight: "bold", 
                 cursor: "pointer",
               }}
             >
