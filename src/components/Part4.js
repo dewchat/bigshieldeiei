@@ -24,9 +24,20 @@ const Part4 = ({ onNext }) => {
   const [statusMessage, setStatusMessage] = useState("");
   const [isDataSubmitted, setIsDataSubmitted] = useState(false);
 
-  // อัปเดตข้อมูลสมาชิกปัจจุบัน
+  // อัปเดตข้อมูลสมาชิกปัจจุบัน (รวมถึงคำนวณอายุจากวันเกิด)
   const handleInputChange = (field, value) => {
-    setCurrentMember({ ...currentMember, [field]: value });
+    if (field === "birthDate") {
+      const birthYear = new Date(value).getFullYear();
+      const currentYear = new Date().getFullYear();
+      const calculatedAge = currentYear - birthYear;
+      setCurrentMember({ 
+        ...currentMember, 
+        birthDate: value, 
+        age: calculatedAge.toString() 
+      });
+    } else {
+      setCurrentMember({ ...currentMember, [field]: value });
+    }
   };
 
   // รีเซ็ตฟอร์มสมาชิกปัจจุบัน
@@ -53,6 +64,7 @@ const Part4 = ({ onNext }) => {
 
   // เพิ่มสมาชิกใหม่
   const addMember = () => {
+    if (currentMember.fullName.trim() === "") return;
     setMembers([...members, currentMember]);
     resetForm();
   };
@@ -82,19 +94,24 @@ const Part4 = ({ onNext }) => {
       is_respondent: member.note || "",
     };
 
-    const response = await fetch("http://localhost:3000/api/persons", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dataToSend),
-    });
+    try {
+      const response = await fetch("http://localhost:3000/api/persons", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSend),
+      });
 
-    if (!response.ok) {
-      throw new Error(`เกิดข้อผิดพลาดในการส่งข้อมูลสมาชิก: ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`เกิดข้อผิดพลาดในการส่งข้อมูลสมาชิก: ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error(`เกิดข้อผิดพลาดสำหรับสมาชิก ${member.fullName}:`, error);
+      throw error; // ส่งข้อผิดพลาดต่อไปเพื่อให้ handleSubmit จัดการ
     }
-
-    return response.json();
   };
 
   // ส่งข้อมูลสมาชิกทั้งหมดทีละคน
@@ -103,16 +120,31 @@ const Part4 = ({ onNext }) => {
     setIsSubmitting(true);
     setStatusMessage("");
 
+    // ตรวจสอบว่ามีข้อมูลในฟอร์มที่ยังไม่ได้เพิ่มเข้าไปในรายการหรือไม่
+    const allMembers = currentMember.fullName.trim() ? [...members, currentMember] : members;
+
+    if (allMembers.length === 0) {
+      setStatusMessage("กรุณาเพิ่มข้อมูลสมาชิกก่อนส่ง");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
-      // วนลูปส่งข้อมูลสมาชิกทีละคน
-      const results = await Promise.all(
-        members.map((member) => sendMemberData(member))
+      const results = await Promise.allSettled(
+        allMembers.map((member) => sendMemberData(member))
       );
 
-      if (results.length === members.length) {
+      const successfulSubmissions = results.filter(
+        (result) => result.status === "fulfilled"
+      ).length;
+
+      if (successfulSubmissions === allMembers.length) {
         setStatusMessage("ข้อมูลถูกบันทึกสำเร็จ!");
         setIsDataSubmitted(true);
         setMembers([]); // รีเซ็ตรายการสมาชิกหลังจากส่งข้อมูลสำเร็จ
+        resetForm(); // รีเซ็ตฟอร์ม
+      } else {
+        setStatusMessage(`ส่งข้อมูลสำเร็จ ${successfulSubmissions} จาก ${allMembers.length} คน`);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -153,7 +185,7 @@ const Part4 = ({ onNext }) => {
         </div>
 
         {/* แสดงรายการสมาชิกที่เพิ่มเข้ามา */}
-        {members.map((member, index) => (
+        {members.map((member) => (
           <div
             key={member.id}
             style={{
@@ -406,7 +438,13 @@ const Part4 = ({ onNext }) => {
             }}
           >
             <label>สภาพร่างกาย</label>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
               <label style={{ display: "flex", alignItems: "center" }}>
                 <input
                   type="checkbox"
@@ -526,7 +564,7 @@ const Part4 = ({ onNext }) => {
                 border: "none",
                 borderRadius: "22px",
                 fontSize: "18px",
-                fontWeight: "bold", 
+                fontWeight: "bold",
                 cursor: "pointer",
               }}
             >
@@ -573,8 +611,6 @@ const Part4 = ({ onNext }) => {
               ถัดไป
             </button>
           </div>
-       
-         
         )}
       </div>
     </div>
