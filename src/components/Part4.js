@@ -573,6 +573,8 @@ const Part4 = ({ onNext }) => {
               ถัดไป
             </button>
           </div>
+       
+         
         )}
       </div>
     </div>
