@@ -20,22 +20,33 @@ const Part1 = ({ onNext }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleAgeChange = (e) => {
-    const { value } = e.target;
-    if (!isNaN(value) && value !== '') {
-      setFormData({ ...formData, age: parseInt(value, 10) });
+    
+    if (name === 'birth_date') {
+      // Calculate age when birth date changes
+      const birthDate = new Date(value);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      
+      // Adjust age if birthday hasn't occurred this year
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      
+      setFormData(prev => ({
+        ...prev,
+        birth_date: value,
+        age: age.toString()
+      }));
     } else {
-      setFormData({ ...formData, age: '' });
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
   const handleNext = async () => {
     setIsSubmitting(true);
 
-    // แปลงช่องที่ว่างเปล่าให้เป็น null
+    // Convert empty fields to null
     const sanitizedData = Object.fromEntries(
       Object.entries(formData).map(([key, value]) => [
         key,
@@ -53,7 +64,7 @@ const Part1 = ({ onNext }) => {
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
 
       setStatusMessage('ข้อมูลถูกบันทึกสำเร็จ!');
-      onNext(); // ไปยังส่วนถัดไป
+      onNext();
     } catch (error) {
       setStatusMessage('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
     } finally {
@@ -152,11 +163,11 @@ const Part1 = ({ onNext }) => {
           <div style={{ display: 'flex', gap: '0.8rem', flexDirection: 'column' }}>
             <label>อายุ</label>
             <input
-              type='number'
+              type='text'
               name='age'
               value={formData.age}
-              onChange={handleAgeChange}
-              style={{ width: '160px', border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px' }}
+              readOnly
+              style={{ width: '160px', border: '1px solid gray', borderRadius: '8px', height: '26px', padding: '4px 7px 4px 10px', backgroundColor: '#f0f0f0' }}
             />
           </div>
         </div>
